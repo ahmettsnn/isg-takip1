@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ISG Takip Sistemi</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,sans-serif;background:#f5f5f0;color:#1a1a18;min-height:100vh;}
+.topbar{background:#fff;border-bottom:1px solid #e5e5e0;padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;align-items:center;gap:10px;}
+.topbar h1{font-size:16px;font-weight:700;}
+.breadcrumb{font-size:13px;color:#aaa;display:flex;align-items:center;gap:6px;}
+.bc-link{cursor:pointer;color:#1a5fa8;}.bc-link:hover{text-decoration:underline;}
+.topbar-btns{display:flex;gap:8px;}
+.btn{padding:7px 14px;font-size:13px;cursor:pointer;border-radius:8px;font-family:inherit;border:1px solid #e5e5e0;background:#fff;color:#1a1a18;white-space:nowrap;}
+.btn:hover{background:#f0f0ea;}
+.btn-primary{background:#1a5fa8;color:#fff;border-color:#1a5fa8;}
+.btn-primary:hover{background:#154d8a;}
+.btn-notif{position:relative;}
+.ndot{position:absolute;top:-5px;right:-5px;width:17px;height:17px;background:#dc2626;border-radius:50%;font-size:10px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.container{max-width:1100px;margin:0 auto;padding:20px 16px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:20px;}
+.stat{background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:14px;text-align:center;}
+.stat-num{font-size:24px;font-weight:700;}.stat-label{font-size:11px;color:#888;margin-top:3px;}
+.c-red{color:#dc2626;}.c-amber{color:#d97706;}.c-green{color:#16a34a;}.c-blue{color:#1a5fa8;}
+.card{background:#fff;border:1px solid #e5e5e0;border-radius:12px;overflow:hidden;margin-bottom:16px;}
+.card-header{padding:14px 16px;border-bottom:1px solid #f0f0ea;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:15px;font-weight:600;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{text-align:left;padding:10px 12px;color:#888;font-weight:600;border-bottom:1px solid #e5e5e0;font-size:11px;white-space:nowrap;background:#fafaf8;}
+tbody tr{border-bottom:1px solid #f0f0ea;}
+tbody tr:hover{background:#fafaf8;}
+tbody td{padding:9px 12px;vertical-align:middle;}
+.ibtns{display:flex;gap:4px;flex-wrap:wrap;}
+.ibtn{padding:3px 9px;font-size:11px;cursor:pointer;border-radius:6px;font-family:inherit;border:1px solid #e5e5e0;background:transparent;color:#666;}
+.ibtn:hover{background:#f0f0ea;}
+.ibtn.del:hover{background:#fef2f2;color:#991b1b;border-color:#fecaca;}
+.ibtn.warn{color:#92400e;border-color:#fde68a;background:#fffbeb;}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;}
+.badge-red{background:#fef2f2;color:#991b1b;}.badge-amber{background:#fffbeb;color:#92400e;}
+.badge-green{background:#f0fdf4;color:#166534;}.badge-blue{background:#eff6ff;color:#1e40af;}
+.badge-gray{background:#f3f4f6;color:#4b5563;}.badge-purple{background:#f5f3ff;color:#6d28d9;}
+.badge-orange{background:#fff7ed;color:#c2410c;}
+.ts-az{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;display:inline-block;}
+.ts-teh{background:#fffbeb;color:#92400e;border:1px solid #fde68a;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;display:inline-block;}
+.ts-cok{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;display:inline-block;}
+.inner-tabs{display:flex;border-bottom:2px solid #f0f0ea;margin-bottom:20px;overflow-x:auto;}
+.itab{padding:10px 14px;font-size:13px;cursor:pointer;background:transparent;border:none;color:#888;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;}
+.itab.active{color:#1a5fa8;border-bottom-color:#1a5fa8;font-weight:600;}
+.nav-tabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap;}
+.nav-tab{padding:7px 16px;font-size:13px;cursor:pointer;border-radius:8px;font-family:inherit;border:1px solid #e5e5e0;background:#fff;color:#888;}
+.nav-tab.active{background:#1a5fa8;color:#fff;border-color:#1a5fa8;font-weight:600;}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.info-item label{font-size:11px;color:#888;font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;}
+.info-item .val{font-size:14px;font-weight:500;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:200;}
+.modal{background:#fff;border-radius:14px;padding:24px;width:92%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.12);}
+.modal h2{font-size:17px;font-weight:600;margin-bottom:18px;}
+.frow{margin-bottom:12px;}
+.frow label{display:block;font-size:12px;color:#666;margin-bottom:4px;font-weight:500;}
+.frow input,.frow select,.frow textarea{width:100%;padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;}
+.frow textarea{resize:vertical;min-height:60px;}
+.frow input:focus,.frow select:focus{outline:none;border-color:#1a5fa8;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
+.mfooter{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;}
+.hidden{display:none!important;}
+.section-title{font-size:11px;font-weight:700;color:#aaa;margin:16px 0 10px;text-transform:uppercase;letter-spacing:.6px;padding-bottom:6px;border-bottom:1px solid #f0f0ea;}
+.hint{font-size:11px;color:#16a34a;margin-top:4px;font-weight:500;}
+.hint-neutral{font-size:11px;color:#aaa;margin-top:4px;}
+.mevzuat-note{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 12px;font-size:12px;color:#1e40af;margin-bottom:14px;}
+.npanel{background:#fff;border-radius:14px;padding:24px;width:92%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.12);}
+.npanel h2{font-size:17px;font-weight:600;margin-bottom:14px;}
+.nitem{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0ea;}
+.nitem:last-child{border-bottom:none;}
+.nitem.read{opacity:.45;}
+.navt{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;}
+.navt.red{background:#fef2f2;color:#991b1b;}.navt.amber{background:#fffbeb;color:#92400e;}
+.nbody{flex:1;min-width:0;}
+.nname{font-size:13px;font-weight:600;}
+.ndesc{font-size:12px;color:#888;margin-top:2px;}.ndate{font-size:11px;color:#bbb;margin-top:2px;}
+.empty-state{text-align:center;padding:40px 20px;color:#aaa;}
+.personel-kart{background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:20px;margin-bottom:16px;}
+.kart-baslik{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+.belge-satir{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0ea;gap:12px;flex-wrap:wrap;}
+.belge-satir:last-child{border-bottom:none;}
+.belge-ad{font-size:13px;font-weight:600;min-width:120px;}
+.belge-tarihler{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.tarih-grup .tlabel{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;}
+.tarih-grup .tval{font-size:12px;font-weight:500;margin-top:2px;}
+.bolum-filter{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.bolum-chip{padding:5px 12px;border-radius:99px;font-size:12px;cursor:pointer;border:1px solid #e5e5e0;background:#fff;color:#666;font-family:inherit;}
+.bolum-chip:hover{background:#f0f0ea;}.bolum-chip.active{background:#1a5fa8;color:#fff;border-color:#1a5fa8;}
+.bolum-group-header{padding:8px 12px;background:#f9f9f7;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;border-bottom:1px solid #f0f0ea;}
+.avatar{width:40px;height:40px;border-radius:50%;background:#eff6ff;color:#1e40af;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;overflow:hidden;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.avatar-lg{width:72px;height:72px;border-radius:50%;background:#eff6ff;color:#1e40af;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;flex-shrink:0;overflow:hidden;border:3px solid #e5e5e0;}
+.avatar-lg img{width:100%;height:100%;object-fit:cover;}
+.ekip-foto{width:56px;height:56px;border-radius:10px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;border:1px solid #e5e5e0;}
+.ekip-foto img{width:100%;height:100%;object-fit:cover;}
+.upload-area{border:2px dashed #e5e5e0;border-radius:10px;padding:20px;text-align:center;cursor:pointer;}
+.upload-area:hover{border-color:#1a5fa8;}
+.upload-area input{display:none;}
+.pasif-banner{background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#92400e;}
+.dosya-satir{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f0ea;gap:8px;}
+.dosya-satir:last-child{border-bottom:none;}
+.foto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;padding:12px;}
+.foto-thumb{width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;border:1px solid #e5e5e0;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>ISG Takip</h1>
+    <div class="breadcrumb" id="breadcrumb"></div>
+  </div>
+  <div class="topbar-btns">
+    <button class="btn btn-notif" onclick="openNotif()">Bildirimler <span class="ndot hidden" id="ndot">0</span></button>
+    <button class="btn btn-primary" id="add-btn" onclick="handleAdd()">+ Ekle</button>
+  </div>
+</div>
+<div class="container" id="main"></div>
+<div class="overlay hidden" id="ov">
+  <div class="modal">
+    <h2 id="mtitle"></h2>
+    <div id="mbody"></div>
+    <div class="mfooter">
+      <button class="btn" onclick="closeModal()">İptal</button>
+      <button class="btn btn-primary" id="save-btn" onclick="save()">Kaydet</button>
+    </div>
+  </div>
+</div>
+<div class="overlay hidden" id="nov">
+  <div class="npanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h2 style="margin:0">Bildirimler <span id="ncnt" style="font-size:13px;font-weight:400;color:#aaa"></span></h2>
+      <div style="display:flex;gap:6px">
+        <button class="ibtn" onclick="tumunuOkundu()">Tümünü Okundu</button>
+        <button class="ibtn del" onclick="okunanSil()">Okunanları Sil</button>
+      </div>
+    </div>
+    <div id="nlist"></div>
+    <div class="mfooter"><button class="btn" onclick="document.getElementById('nov').classList.add('hidden')">Kapat</button></div>
+  </div>
+</div>
+<script>
+var SURELER={az:{risk:1825,acil:1460,yangin:365,yillik_egitim:365,yillik_calisma:365,isg_egitim:1095,saglik:1825,ilkyardim:1095,mesleki:1825},teh:{risk:1460,acil:1460,yangin:365,yillik_egitim:365,yillik_calisma:365,isg_egitim:730,saglik:1095,ilkyardim:1095,mesleki:1825},cok:{risk:730,acil:730,yangin:365,yillik_egitim:365,yillik_calisma:365,isg_egitim:365,saglik:365,ilkyardim:1095,mesleki:1825}};
+var FIRMA_MEVZUAT=[{key:'risk',label:'Risk Analizi'},{key:'acil',label:'Acil Durum Plani'},{key:'yangin',label:'Yangin Tatbikati'},{key:'yillik_egitim',label:'Yillik Egitim Plani'},{key:'yillik_calisma',label:'Yillik Calisma Plani'}];
+var PERS_MEVZUAT=[{key:'ilkyardim',label:'Ilk Yardim Egitimi'},{key:'mesleki',label:'Mesleki Yeterlilik'}];
+var ACIL_KURAL={az:{yangin:50,koruma:50,kurtarma:50,ilkyardim:20},teh:{yangin:40,koruma:40,kurtarma:40,ilkyardim:15},cok:{yangin:30,koruma:30,kurtarma:30,ilkyardim:10}};
+var ACIL_EKIP=[{key:'yangin',label:'Yangin Ekibi'},{key:'koruma',label:'Koruma Ekibi'},{key:'kurtarma',label:'Kurtarma Ekibi'},{key:'ilkyardim',label:'Ilk Yardim Ekibi'}];
+var TS_LABEL={az:'Az Tehlikeli',teh:'Tehlikeli',cok:'Cok Tehlikeli'};
+var TS_CLASS={az:'ts-az',teh:'ts-teh',cok:'ts-cok'};
+var PERIYOT=[{v:30,l:'1 Ay'},{v:60,l:'2 Ay'},{v:90,l:'3 Ay'},{v:120,l:'4 Ay'},{v:150,l:'5 Ay'},{v:180,l:'6 Ay'},{v:210,l:'7 Ay'},{v:240,l:'8 Ay'},{v:270,l:'9 Ay'},{v:300,l:'10 Ay'},{v:330,l:'11 Ay'},{v:365,l:'12 Ay'}];
+
+var today=new Date();today.setHours(0,0,0,0);
+function addD(d,n){if(!d)return'';var r=new Date(d);r.setDate(r.getDate()+n);return r.toISOString().slice(0,10);}
+function fmt(d){return d?new Date(d).toLocaleDateString('tr-TR'):'—';}
+function dif(d){return d?Math.floor((new Date(d)-today)/86400000):9999;}
+function st(d){if(!d)return'gray';var v=dif(d);return v<0?'red':v<=30?'amber':'green';}
+function worst(a){var f=a.filter(function(x){return x!=='gray';});if(!f.length)return'gray';if(f.indexOf('red')>=0)return'red';if(f.indexOf('amber')>=0)return'amber';return'green';}
+function lbl(s){return s==='red'?'Suresi Gecmis':s==='amber'?'30 Gun Icinde':s==='gray'?'Girilmedi':'Gecerli';}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function ini(ad){return ad.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();}
+function gerekliE(ts,key,sayi){return Math.max(1,Math.ceil(sayi/(ACIL_KURAL[ts][key]||50)));}
+function mevcutE(fid,key){return personeller.filter(function(p){return p.fid===fid&&p.aktif&&(p.acilEkipler||[]).indexOf(key)>=0;}).length;}
+function perIsg(p){var f=firmalar.find(function(x){return x.id===p.fid;});return(f&&p.isg_tarih)?addD(p.isg_tarih,SURELER[f.ts].isg_egitim):'';}
+function perSaglik(p){var f=firmalar.find(function(x){return x.id===p.fid;});return(f&&p.saglik_tarih)?addD(p.saglik_tarih,SURELER[f.ts].saglik):'';}
+function ekipBit(e){return(e.sonBakim&&e.periyot)?addD(e.sonBakim,e.periyot):'';}
+function fIcon(t){return t==='pdf'?'📄':t==='png'||t==='jpg'||t==='jpeg'?'🖼':'📎';}
+function avHtml(p,lg){
+  var cls=lg?'avatar-lg':'avatar';
+  if(p.foto)return '<div class="'+cls+'"><img src="'+p.foto+'"/></div>';
+  return '<div class="'+cls+'">'+ini(p.ad)+'</div>';
+}
+function ekHtml(e){
+  if(e.fotolar&&e.fotolar.length)return '<div class="ekip-foto"><img src="'+e.fotolar[0]+'"/></div>';
+  return '<div class="ekip-foto">&#9881;</div>';
+}
+
+// DATA
+var firmalar=[
+  {id:'f1',ad:'ABC Insaat Ltd.',nace:'4120',ts:'cok',vergi:'1234567890',sgk:'123456',adres:'Istanbul / Kadikoy',yetkili:'Mehmet Yildiz',telefon:'0212 555 0101',email:'info@abc.com',bolumler:['Santiye','Ofis','Makine'],ozelEkipler:[],
+   belgeler:[{id:'b1',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-400),bitis:addD(today,-20),pdfler:[]},{id:'b2',ad:'Acil Durum Plani',tip:'mevzuat',key:'acil',hazirlik:addD(today,-10),bitis:addD(today,25),pdfler:[]},{id:'b3',ad:'Yangin Tatbikati',tip:'mevzuat',key:'yangin',hazirlik:addD(today,-60),bitis:addD(today,300),pdfler:[]}],
+   ekipmanlar:[{id:'e1',ad:'Forklift',marka:'Toyota',model:'8FBN25',seri:'TY-001',konum:'Depo A',sorumlAd:'Ahmet Yilmaz',sorumlTel:'0532 111 2233',sonBakim:addD(today,-50),periyot:90,belgeler:[],fotolar:[]}]},
+  {id:'f2',ad:'XYZ Buro Hizmetleri',nace:'8211',ts:'az',vergi:'9876543210',sgk:'654321',adres:'Ankara / Cankaya',yetkili:'Ayse Demir',telefon:'0312 444 0202',email:'info@xyz.com',bolumler:['Muhasebe','IK','IT'],ozelEkipler:[],
+   belgeler:[{id:'b4',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-200),bitis:addD(today,180),pdfler:[]}],
+   ekipmanlar:[]},
+  {id:'f3',ad:'Guven Kimya A.S.',nace:'2011',ts:'cok',vergi:'1122334455',sgk:'112233',adres:'Izmir / Bornova',yetkili:'Ali Guven',telefon:'0232 333 0303',email:'info@guven.com',bolumler:['Uretim','Laboratuvar','Depo'],ozelEkipler:[{key:'ozel_kimya',label:'Kimyasal Mudahale',gerekli:2}],
+   belgeler:[{id:'b5',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-700),bitis:addD(today,-30),pdfler:[]},{id:'b6',ad:'Acil Durum Plani',tip:'mevzuat',key:'acil',hazirlik:addD(today,-5),bitis:addD(today,-5),pdfler:[]}],
+   ekipmanlar:[{id:'e2',ad:'Kompressor',marka:'Atlas Copco',model:'GA15',seri:'AC-055',konum:'Makine Dairesi',sorumlAd:'Ayse Sahin',sorumlTel:'0536 555 6677',sonBakim:addD(today,-100),periyot:180,belgeler:[],fotolar:[]}]},
+];
+var personeller=[
+  {id:'p1',fid:'f1',aktif:true,bolum:'Santiye',ad:'Ahmet Yilmaz',tc:'12345678901',dogum:'1985-03-15',ise_giris:'2018-06-01',cikis_tarihi:'',gorev:'Saha Iscisi',cinsiyet:'Erkek',medeni:'Evli',kan:'A Rh+',egitim:'Lise',telefon:'0532 111 2233',email:'ahmet@mail.com',adres:'Kadikoy / Istanbul',foto:'',acilEkipler:['yangin','kurtarma'],isg_tarih:addD(today,-380),saglik_tarih:addD(today,-30),belgeler:[{id:'pb1',ad:'Mesleki Yeterlilik',tip:'mevzuat',key:'mesleki',hazirlik:addD(today,-100),bitis:addD(today,400)}],dosyalar:[]},
+  {id:'p2',fid:'f1',aktif:true,bolum:'Santiye',ad:'Fatma Kaya',tc:'23456789012',dogum:'1990-07-22',ise_giris:'2020-01-15',cikis_tarihi:'',gorev:'Kalipcı',cinsiyet:'Kadin',medeni:'Bekar',kan:'B Rh+',egitim:'On Lisans',telefon:'0533 222 3344',email:'fatma@mail.com',adres:'Uskudar / Istanbul',foto:'',acilEkipler:['ilkyardim'],isg_tarih:addD(today,-20),saglik_tarih:addD(today,-380),belgeler:[],dosyalar:[]},
+  {id:'p3',fid:'f1',aktif:false,bolum:'Ofis',ad:'Kemal Aydin',tc:'33456789012',dogum:'1988-05-10',ise_giris:'2017-03-01',cikis_tarihi:addD(today,-60),gorev:'Sef',cinsiyet:'Erkek',medeni:'Evli',kan:'0 Rh+',egitim:'Lisans',telefon:'0534 333 4455',email:'kemal@mail.com',adres:'Besiktas / Istanbul',foto:'',acilEkipler:[],isg_tarih:addD(today,-50),saglik_tarih:addD(today,-100),belgeler:[],dosyalar:[]},
+  {id:'p4',fid:'f2',aktif:true,bolum:'Muhasebe',ad:'Zeynep Arslan',tc:'34567890123',dogum:'1988-11-08',ise_giris:'2015-09-01',cikis_tarihi:'',gorev:'Muhasebeci',cinsiyet:'Kadin',medeni:'Evli',kan:'AB Rh+',egitim:'Lisans',telefon:'0535 444 5566',email:'zeynep@mail.com',adres:'Cankaya / Ankara',foto:'',acilEkipler:[],isg_tarih:addD(today,-100),saglik_tarih:addD(today,-200),belgeler:[],dosyalar:[]},
+  {id:'p5',fid:'f3',aktif:true,bolum:'Laboratuvar',ad:'Ayse Sahin',tc:'45678901234',dogum:'1992-05-30',ise_giris:'2019-03-10',cikis_tarihi:'',gorev:'Kimyager',cinsiyet:'Kadin',medeni:'Bekar',kan:'A Rh-',egitim:'Lisans',telefon:'0536 555 6677',email:'ayse@mail.com',adres:'Bornova / Izmir',foto:'',acilEkipler:['yangin','ilkyardim'],isg_tarih:addD(today,-370),saglik_tarih:addD(today,-10),belgeler:[{id:'pb2',ad:'Ilk Yardim Egitimi',tip:'mevzuat',key:'ilkyardim',hazirlik:addD(today,-20),bitis:addD(today,5)}],dosyalar:[]},
+];
+var okunan=[];
+var curView='home',curFirmaId=null,curTab='belgeler',curPersonelId=null,curEkipmanId=null,curBolum='hepsi';
+var editId=null,editType=null,editSub=null;
+
+function render(){
+  if(curView==='home')renderHome();
+  else if(curView==='cikanlar')renderCikanlar();
+  else if(curView==='firma')renderFirma();
+  else if(curView==='personel')renderPersonelDetay();
+  else if(curView==='ekipman')renderEkipmanDetay();
+}
+
+function renderHome(){
+  setBreadcrumb([]);
+  document.getElementById('add-btn').textContent='+ Firma Ekle';
+  var gs=globalStats();
+  var aktifP=personeller.filter(function(p){return p.aktif;}).length;
+  var pasifP=personeller.filter(function(p){return !p.aktif;}).length;
+  var h='<div class="stats">'
+    +'<div class="stat"><div class="stat-num c-red">'+gs.exp+'</div><div class="stat-label">Suresi Gecmis</div></div>'
+    +'<div class="stat"><div class="stat-num c-amber">'+gs.son+'</div><div class="stat-label">30 Gunde Doluyor</div></div>'
+    +'<div class="stat"><div class="stat-num c-green">'+gs.ok+'</div><div class="stat-label">Gecerli</div></div>'
+    +'<div class="stat"><div class="stat-num c-blue">'+firmalar.length+'</div><div class="stat-label">Isyeri</div></div>'
+    +'<div class="stat"><div class="stat-num" style="color:#1a1a18">'+aktifP+'</div><div class="stat-label">Aktif Personel</div></div>'
+    +'<div class="stat"><div class="stat-num" style="color:#888">'+pasifP+'</div><div class="stat-label">Isten Cikan</div></div>'
+    +'</div>'
+    +'<div class="nav-tabs"><button class="nav-tab active">Isyerleri</button><button class="nav-tab" onclick="goCikanlar()">Isten Cikanlar ('+pasifP+')</button></div>'
+    +'<div class="card"><div class="card-header"><span class="card-title">Isyerleri</span></div>'
+    +'<table><thead><tr><th>Isyeri Adi</th><th>NACE</th><th>Tehlike Sinifi</th><th>Yetkili</th><th>Personel</th><th>Durum</th><th></th></tr></thead><tbody>';
+  firmalar.forEach(function(f){
+    var pc=personeller.filter(function(p){return p.fid===f.id&&p.aktif;}).length;
+    var allSt=f.belgeler.map(function(b){return st(b.bitis);});
+    (f.ekipmanlar||[]).forEach(function(e){allSt.push(st(ekipBit(e)));});
+    personeller.filter(function(p){return p.fid===f.id&&p.aktif;}).forEach(function(p){allSt.push(st(perIsg(p)));allSt.push(st(perSaglik(p)));p.belgeler.forEach(function(b){allSt.push(st(b.bitis));});});
+    var bs=worst(allSt);
+    h+='<tr style="cursor:pointer" onclick="goFirma(\''+f.id+'\')">'
+      +'<td style="font-weight:600">'+f.ad+'</td>'
+      +'<td style="color:#888">'+f.nace+'</td>'
+      +'<td><span class="'+TS_CLASS[f.ts]+'">'+TS_LABEL[f.ts]+'</span></td>'
+      +'<td style="color:#888;font-size:12px">'+(f.yetkili||'—')+'</td>'
+      +'<td>'+pc+' kisi</td>'
+      +'<td><span class="badge badge-'+bs+'">'+lbl(bs)+'</span></td>'
+      +'<td onclick="event.stopPropagation()"><div class="ibtns"><button class="ibtn" onclick="openFirmaModal(\''+f.id+'\')">Duzenle</button><button class="ibtn del" onclick="delFirma(\''+f.id+'\')">Sil</button></div></td>'
+      +'</tr>';
+  });
+  if(!firmalar.length)h+='<tr><td colspan="7" class="empty-state">Henuz isyeri yok.</td></tr>';
+  h+='</tbody></table></div>';
+  document.getElementById('main').innerHTML=h;
+  updateBadge();
+}
+
+function renderCikanlar(){
+  setBreadcrumb([]);
+  document.getElementById('add-btn').textContent='+ Firma Ekle';
+  var cikanlar=personeller.filter(function(p){return !p.aktif;});
+  var h='<div class="nav-tabs"><button class="nav-tab" onclick="goHome()">Isyerleri</button><button class="nav-tab active">Isten Cikanlar ('+cikanlar.length+')</button></div>'
+    +'<div class="card"><div class="card-header"><span class="card-title">Isten Cikan Personeller</span></div>';
+  if(!cikanlar.length){h+='<div class="empty-state">Isten cikan personel yok.</div>';}
+  else{
+    h+='<table><thead><tr><th></th><th>Ad Soyad</th><th>Firma</th><th>Gorevi</th><th>Ise Giris</th><th>Cikis Tarihi</th><th></th></tr></thead><tbody>';
+    cikanlar.forEach(function(p){
+      var f=firmalar.find(function(x){return x.id===p.fid;});
+      h+='<tr><td>'+avHtml(p,false)+'</td><td style="font-weight:600">'+p.ad+'</td><td style="color:#888">'+(f?f.ad:'—')+'</td><td style="color:#888">'+p.gorev+'</td><td style="color:#888;font-size:12px">'+fmt(p.ise_giris)+'</td><td><span class="badge badge-gray">'+fmt(p.cikis_tarihi)+'</span></td>'
+        +'<td><div class="ibtns"><button class="ibtn" onclick="geriAl(\''+p.id+'\')">Geri Al</button><button class="ibtn del" onclick="delPersonel(\''+p.id+'\')">Sil</button></div></td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+  h+='</div>';
+  document.getElementById('main').innerHTML=h;updateBadge();
+}
+
+function renderFirma(){
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f){goHome();return;}
+  setBreadcrumb([{label:f.ad}]);
+  var h='<div class="inner-tabs">'
+    +'<button class="itab '+(curTab==='bilgiler'?'active':'')+'" onclick="switchTab(\'bilgiler\')">Firma Bilgileri</button>'
+    +'<button class="itab '+(curTab==='belgeler'?'active':'')+'" onclick="switchTab(\'belgeler\')">Firma Belgeleri</button>'
+    +'<button class="itab '+(curTab==='personeller'?'active':'')+'" onclick="switchTab(\'personeller\')">Personeller</button>'
+    +'<button class="itab '+(curTab==='ekipmanlar'?'active':'')+'" onclick="switchTab(\'ekipmanlar\')">Ekipmanlar</button>'
+    +'</div>';
+  if(curTab==='bilgiler')h+=renderBilgiler(f);
+  else if(curTab==='belgeler')h+=renderFBelgeler(f);
+  else if(curTab==='personeller')h+=renderPListesi(f);
+  else h+=renderEkipListesi(f);
+  document.getElementById('main').innerHTML=h;updateBadge();
+}
+
+function renderBilgiler(f){
+  document.getElementById('add-btn').textContent='Duzenle';
+  var pSayisi=personeller.filter(function(p){return p.fid===f.id&&p.aktif;}).length;
+  var tumE=ACIL_EKIP.concat(f.ozelEkipler||[]);
+  var h='<div class="card" style="padding:20px"><div class="info-grid">'
+    +'<div class="info-item"><label>Firma Adi</label><div class="val">'+f.ad+'</div></div>'
+    +'<div class="info-item"><label>Tehlike Sinifi</label><div class="val"><span class="'+TS_CLASS[f.ts]+'">'+TS_LABEL[f.ts]+'</span></div></div>'
+    +'<div class="info-item"><label>NACE Kodu</label><div class="val">'+(f.nace||'—')+'</div></div>'
+    +'<div class="info-item"><label>Vergi Kimlik No</label><div class="val">'+(f.vergi||'—')+'</div></div>'
+    +'<div class="info-item"><label>SGK Sicil No</label><div class="val">'+(f.sgk||'—')+'</div></div>'
+    +'<div class="info-item"><label>Firma Yetkilisi</label><div class="val">'+(f.yetkili||'—')+'</div></div>'
+    +'<div class="info-item"><label>Telefon</label><div class="val">'+(f.telefon||'—')+'</div></div>'
+    +'<div class="info-item"><label>E-posta</label><div class="val">'+(f.email||'—')+'</div></div>'
+    +'<div class="info-item"><label>Adres</label><div class="val">'+(f.adres||'—')+'</div></div>'
+    +'</div>'
+    +'<div style="margin-top:16px;padding-top:14px;border-top:1px solid #f0f0ea">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="section-title" style="margin:0;border:none">Bolumler</div><button class="ibtn" onclick="openBolumModal(\''+f.id+'\')">+ Bolum Yonet</button></div>'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  (f.bolumler||[]).forEach(function(b){h+='<span class="badge badge-purple">'+b+'</span>';});
+  if(!(f.bolumler||[]).length)h+='<span style="color:#aaa;font-size:13px">Bolum eklenmemis.</span>';
+  h+='</div></div>'
+    +'<div style="margin-top:16px;padding-top:14px;border-top:1px solid #f0f0ea">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="section-title" style="margin:0;border:none">Acil Durum Ekipleri</div><button class="ibtn" onclick="openOzelEkipModal(\''+f.id+'\')">+ Ozel Ekip</button></div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px">';
+  tumE.forEach(function(e){
+    var mevcut=mevcutE(f.id,e.key);
+    var gerekli=e.gerekli||gerekliE(f.ts,e.key,pSayisi);
+    var tamam=mevcut>=gerekli;
+    var kural=ACIL_KURAL[f.ts]?ACIL_KURAL[f.ts][e.key]:null;
+    h+='<div style="background:'+(tamam?'#f0fdf4':'#fef2f2')+';border:1px solid '+(tamam?'#bbf7d0':'#fecaca')+';border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between">'
+      +'<div><div style="font-size:12px;font-weight:600">'+e.label+'</div>'
+      +'<div style="font-size:11px;color:#888;margin-top:1px">'+(kural?'Her '+kural+' kisi icin 1':'Sabit: '+gerekli)+'</div>'
+      +(!tamam?'<div style="font-size:11px;color:#dc2626;margin-top:2px;font-weight:500">'+(gerekli-mevcut)+' eksik</div>':'')
+      +'</div><div style="text-align:right"><div style="font-size:20px;font-weight:700;color:'+(tamam?'#16a34a':'#dc2626')+'">'+mevcut+'/'+gerekli+'</div><div style="font-size:10px;color:#aaa">mevcut/gerekli</div></div></div>';
+  });
+  h+='</div><div style="font-size:11px;color:#aaa;margin-top:6px">Aktif personel: '+pSayisi+'</div></div></div>';
+  return h;
+}
+
+function renderFBelgeler(f){
+  document.getElementById('add-btn').textContent='+ Belge Ekle';
+  if(!f.belgeler.length)return'<div class="card"><div class="empty-state"><p>Henuz belge yok.</p><br><button class="btn btn-primary" onclick="openBelgeModal()">+ Ekle</button></div></div>';
+  var h='<div class="card"><table><thead><tr><th>Belge Adi</th><th>Tur</th><th>Hazirlanma</th><th>Bitis</th><th>Durum</th><th>Kalan</th><th>Dosyalar</th><th></th></tr></thead><tbody>';
+  f.belgeler.forEach(function(b){
+    var s=st(b.bitis);var d=dif(b.bitis);
+    var k=!b.bitis?'—':d<0?(Math.abs(d)+' gun gecti'):(d+' gun kaldi');
+    var dc=(b.pdfler||[]).length;
+    h+='<tr><td style="font-weight:600">'+b.ad+'</td>'
+      +'<td><span class="badge '+(b.tip==='mevzuat'?'badge-blue':'badge-gray')+'">'+(b.tip==='mevzuat'?'Mevzuat':'Manuel')+'</span></td>'
+      +'<td style="color:#888">'+fmt(b.hazirlik)+'</td><td>'+fmt(b.bitis)+'</td>'
+      +'<td><span class="badge badge-'+s+'">'+lbl(s)+'</span></td>'
+      +'<td style="color:'+(s==='red'?'#dc2626':s==='amber'?'#d97706':'#16a34a')+';font-weight:500;font-size:12px">'+k+'</td>'
+      +'<td>'+(dc?'<span class="badge badge-blue">'+dc+' dosya</span>':'<span style="color:#aaa;font-size:12px">—</span>')+'</td>'
+      +'<td><div class="ibtns"><button class="ibtn" onclick="openBelgeModal(\''+b.id+'\')">Duzenle</button><button class="ibtn" onclick="openBelgeDosya(\''+f.id+'\',\''+b.id+'\')">Dosya</button><button class="ibtn del" onclick="delBelge(\''+f.id+'\',\''+b.id+'\')">Sil</button></div></td></tr>';
+  });
+  return h+'</tbody></table></div>';
+}
+
+function renderPListesi(f){
+  document.getElementById('add-btn').textContent='+ Personel Ekle';
+  var psA=personeller.filter(function(p){return p.fid===f.id&&p.aktif;});
+  var bl=f.bolumler||[];
+  var h='<div class="bolum-filter"><span style="font-size:12px;color:#888;font-weight:600">Bolum:</span>'
+    +'<button class="bolum-chip '+(curBolum==='hepsi'?'active':'')+'" onclick="setCurBolum(\'hepsi\')">Tumu ('+psA.length+')</button>';
+  bl.forEach(function(b){var c=psA.filter(function(p){return p.bolum===b;}).length;h+='<button class="bolum-chip '+(curBolum===b?'active':'')+'" onclick="setCurBolum(\''+b+'\')">'+b+' ('+c+')</button>';});
+  var atan=psA.filter(function(p){return !p.bolum||bl.indexOf(p.bolum)<0;});
+  if(atan.length)h+='<button class="bolum-chip '+(curBolum==='diger'?'active':'')+'" onclick="setCurBolum(\'diger\')">Atanmamis</button>';
+  h+='</div>';
+  var filtre=psA;
+  if(curBolum==='diger')filtre=atan;
+  else if(curBolum!=='hepsi')filtre=psA.filter(function(p){return p.bolum===curBolum;});
+  if(!filtre.length){return h+'<div class="card"><div class="empty-state"><p>'+(psA.length?'Bu bolumde personel yok.':'Henuz personel yok.')+'</p>'+(psA.length?'':'<br><button class="btn btn-primary" onclick="openPersonelModal()">+ Ekle</button>')+'</div></div>';}
+  if(curBolum==='hepsi'&&bl.length>0){
+    var gruplar={};
+    filtre.forEach(function(p){var b=(p.bolum&&bl.indexOf(p.bolum)>=0)?p.bolum:'Atanmamis';if(!gruplar[b])gruplar[b]=[];gruplar[b].push(p);});
+    var sira=bl.slice();if(gruplar['Atanmamis'])sira.push('Atanmamis');
+    h+='<div class="card">';
+    sira.forEach(function(ba){
+      if(!gruplar[ba]||!gruplar[ba].length)return;
+      h+='<div class="bolum-group-header">'+ba+' — '+gruplar[ba].length+' kisi</div>'
+        +'<table><thead><tr><th style="width:40px"></th><th>Ad Soyad</th><th>Gorevi</th><th>ISG Bitis</th><th>Saglik Bitis</th><th>Durum</th><th></th></tr></thead><tbody>';
+      gruplar[ba].forEach(function(p){h+=pSatir(p,false);});
+      h+='</tbody></table>';
+    });
+    h+='</div>';
+  }else{
+    h+='<div class="card"><table><thead><tr><th style="width:40px"></th><th>Ad Soyad</th><th>Bolum</th><th>Gorevi</th><th>ISG Bitis</th><th>Saglik Bitis</th><th>Durum</th><th></th></tr></thead><tbody>';
+    filtre.forEach(function(p){h+=pSatir(p,true);});
+    h+='</tbody></table></div>';
+  }
+  return h;
+}
+function pSatir(p,showB){
+  var ib=perIsg(p);var sb=perSaglik(p);
+  var ov=worst([st(ib),st(sb)].concat(p.belgeler.map(function(b){return st(b.bitis);})));
+  return '<tr style="cursor:pointer" onclick="goPersonel(\''+p.id+'\')">'
+    +'<td>'+avHtml(p,false)+'</td><td style="font-weight:600">'+p.ad+'</td>'
+    +(showB?'<td><span class="badge badge-purple">'+(p.bolum||'—')+'</span></td>':'')
+    +'<td style="color:#888;font-size:12px">'+(p.gorev||'—')+'</td>'
+    +'<td><span class="badge badge-'+st(ib)+'">'+(fmt(ib)||'Girilmedi')+'</span></td>'
+    +'<td><span class="badge badge-'+st(sb)+'">'+(fmt(sb)||'Girilmedi')+'</span></td>'
+    +'<td><span class="badge badge-'+ov+'">'+lbl(ov)+'</span></td>'
+    +'<td onclick="event.stopPropagation()"><div class="ibtns"><button class="ibtn" onclick="goPersonel(\''+p.id+'\')">Detay</button><button class="ibtn" onclick="openPersonelModal(\''+p.id+'\')">Duzenle</button><button class="ibtn warn" onclick="istenCikar(\''+p.id+'\')">Cikis</button><button class="ibtn del" onclick="delPersonel(\''+p.id+'\')">Sil</button></div></td></tr>';
+}
+
+function renderEkipListesi(f){
+  document.getElementById('add-btn').textContent='+ Ekipman Ekle';
+  var ek=f.ekipmanlar||[];
+  if(!ek.length)return'<div class="card"><div class="empty-state"><p>Henuz ekipman yok.</p><br><button class="btn btn-primary" onclick="openEkipmanModal()">+ Ekle</button></div></div>';
+  var h='<div class="card"><table><thead><tr><th style="width:60px"></th><th>Ekipman Adi</th><th>Marka/Model</th><th>Konum</th><th>Sorumlu</th><th>Son Bakim</th><th>Bakim Bitis</th><th>Durum</th><th></th></tr></thead><tbody>';
+  ek.forEach(function(e){
+    var bit=ekipBit(e);var s=st(bit);var d=dif(bit);
+    var k=!bit?'—':d<0?(Math.abs(d)+' gun gecti'):(d+' gun kaldi');
+    h+='<tr style="cursor:pointer" onclick="goEkipman(\''+e.id+'\')">'
+      +'<td>'+ekHtml(e)+'</td>'
+      +'<td style="font-weight:600">'+e.ad+'</td>'
+      +'<td style="color:#888;font-size:12px">'+(e.marka||'')+(e.model?' / '+e.model:'')+'</td>'
+      +'<td style="color:#888;font-size:12px">'+(e.konum||'—')+'</td>'
+      +'<td style="color:#888;font-size:12px">'+(e.sorumlAd||'—')+'</td>'
+      +'<td style="color:#888;font-size:12px">'+fmt(e.sonBakim)+'</td>'
+      +'<td>'+fmt(bit)+'</td>'
+      +'<td><span class="badge badge-'+s+'">'+lbl(s)+'</span></td>'
+      +'<td onclick="event.stopPropagation()"><div class="ibtns"><button class="ibtn" onclick="openEkipmanModal(\''+e.id+'\')">Duzenle</button><button class="ibtn del" onclick="delEkipman(\''+e.id+'\')">Sil</button></div></td></tr>';
+  });
+  return h+'</tbody></table></div>';
+}
+
+function renderEkipmanDetay(){
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});
+  var e=(f?f.ekipmanlar||[]:firmalar).find(function(x){return x.id===curEkipmanId;});
+  if(!e||!f){goFirma(curFirmaId);return;}
+  setBreadcrumb([{label:f.ad},{label:e.ad}]);
+  document.getElementById('add-btn').textContent='';
+  var bit=ekipBit(e);var s=st(bit);var d=dif(bit);
+  var k=!bit?'—':d<0?(Math.abs(d)+' gun gecti'):(d+' gun kaldi');
+  var periyotLabel=PERIYOT.find(function(x){return x.v==e.periyot;});
+  var h='<div class="personel-kart"><div class="kart-baslik">'
+    +'<div style="width:80px;height:80px;border-radius:12px;background:#f3f4f6;border:1px solid #e5e5e0;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:32px">'
+    +(e.fotolar&&e.fotolar.length?'<img src="'+e.fotolar[0]+'" style="width:100%;height:100%;object-fit:cover"/>':'&#9881;')
+    +'</div>'
+    +'<div style="flex:1"><div style="font-size:17px;font-weight:700">'+e.ad+'</div>'
+    +'<div style="font-size:12px;color:#888;margin-top:3px">'+(e.marka||'')+(e.model?' · '+e.model:'')+(e.seri?' · SN: '+e.seri:'')+'</div></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="ibtn" onclick="openEkipFotoModal(\''+e.id+'\')">Fotograf Ekle</button><button class="ibtn" onclick="openEkipmanModal(\''+e.id+'\')">Duzenle</button></div>'
+    +'</div>'
+    +'<div class="info-grid">'
+    +'<div class="info-item"><label>Ekipman Adi</label><div class="val">'+e.ad+'</div></div>'
+    +'<div class="info-item"><label>Marka</label><div class="val">'+(e.marka||'—')+'</div></div>'
+    +'<div class="info-item"><label>Model</label><div class="val">'+(e.model||'—')+'</div></div>'
+    +'<div class="info-item"><label>Seri No</label><div class="val">'+(e.seri||'—')+'</div></div>'
+    +'<div class="info-item"><label>Konum</label><div class="val">'+(e.konum||'—')+'</div></div>'
+    +'<div class="info-item"><label>Sorumlu</label><div class="val">'+(e.sorumlAd||'—')+'</div></div>'
+    +'<div class="info-item"><label>Sorumlu Tel</label><div class="val">'+(e.sorumlTel||'—')+'</div></div>'
+    +'</div>'
+    +'<div style="margin-top:14px;padding-top:12px;border-top:1px solid #f0f0ea">'
+    +'<div style="font-size:13px;font-weight:700;margin-bottom:10px">Periyodik Bakim</div>'
+    +'<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">'
+    +'<div class="tarih-grup"><div class="tlabel">Son Bakim</div><div class="tval">'+fmt(e.sonBakim)+'</div></div>'
+    +'<div class="tarih-grup"><div class="tlabel">Periyot</div><div class="tval">'+(periyotLabel?periyotLabel.l:'—')+'</div></div>'
+    +'<div class="tarih-grup"><div class="tlabel">Bitis</div><div class="tval" style="color:'+(s==='red'?'#dc2626':s==='amber'?'#d97706':'#16a34a')+'">'+fmt(bit)+'</div></div>'
+    +'<span class="badge badge-'+s+'">'+lbl(s)+'</span>'
+    +'<span style="font-size:12px;color:'+(s==='red'?'#dc2626':s==='amber'?'#d97706':'#16a34a')+';font-weight:500">'+k+'</span>'
+    +'</div></div></div>';
+  if(e.fotolar&&e.fotolar.length){
+    h+='<div class="card"><div class="card-header"><span class="card-title">Fotograflar</span><button class="ibtn" onclick="openEkipFotoModal(\''+e.id+'\')">+ Fotograf Ekle</button></div><div class="foto-grid">';
+    e.fotolar.forEach(function(src,i){h+='<div style="position:relative"><img src="'+src+'" class="foto-thumb" onclick="window.open(\''+src+'\',\'_blank\')"/><button onclick="delEkipFoto(\''+e.id+'\','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px">✕</button></div>';});
+    h+='</div></div>';
+  }
+  h+='<div class="card"><div class="card-header"><span class="card-title">Belgeler / Dosyalar</span><button class="btn btn-primary" style="font-size:12px;padding:5px 12px" onclick="openEkipBelgeModal(\''+e.id+'\')">+ Belge Ekle</button></div>';
+  if(!(e.belgeler||[]).length){h+='<div style="padding:24px;text-align:center;color:#aaa;font-size:13px">Henuz belge yok.</div>';}
+  else{
+    (e.belgeler||[]).forEach(function(d2){
+      h+='<div class="dosya-satir"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">'+fIcon(d2.tip)+'</div><div><div style="font-size:13px;font-weight:600">'+d2.ad+'</div><div style="font-size:11px;color:#aaa">'+(d2.tip?d2.tip.toUpperCase():'')+'</div></div></div>'
+        +'<div class="ibtns">'+(d2.veri?'<button class="ibtn" onclick="dosyaIndir(\'ekip\',\''+e.id+'\',\''+d2.id+'\')">Indir</button>':'')+'<button class="ibtn del" onclick="delEkipBelge(\''+e.id+'\',\''+d2.id+'\')">Sil</button></div></div>';
+    });
+  }
+  h+='</div>';
+  document.getElementById('main').innerHTML=h;updateBadge();
+}
+
+function renderPersonelDetay(){
+  var p=personeller.find(function(x){return x.id===curPersonelId;});
+  var f=firmalar.find(function(x){return x.id===(p?p.fid:null);});
+  if(!p||!f){goFirma(curFirmaId);return;}
+  setBreadcrumb([{label:f.ad},{label:p.ad}]);
+  document.getElementById('add-btn').textContent=p.aktif?'+ Ek Belge Ekle':'';
+  var ib=perIsg(p);var sb=perSaglik(p);
+  var tumE=ACIL_EKIP.concat(f.ozelEkipler||[]);
+  var h='';
+  if(!p.aktif)h+='<div class="pasif-banner">&#9888; Bu personel isten cikmistir. Cikis: '+fmt(p.cikis_tarihi)+' <button class="ibtn" style="margin-left:auto" onclick="geriAl(\''+p.id+'\')">Geri Al</button></div>';
+  h+='<div class="personel-kart"><div class="kart-baslik">'
+    +avHtml(p,true)
+    +'<div style="flex:1"><div style="font-size:17px;font-weight:700">'+p.ad+(!p.aktif?' <span class="badge badge-gray" style="font-size:12px">Pasif</span>':'')+'</div>'
+    +'<div style="font-size:12px;color:#888;margin-top:3px">'+p.gorev+' &middot; <span class="'+TS_CLASS[f.ts]+'">'+TS_LABEL[f.ts]+'</span>'+(p.bolum?' &middot; <span class="badge badge-purple">'+p.bolum+'</span>':'')+'</div></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+    +'<button class="ibtn" onclick="openFotoModal(\''+p.id+'\')">'+(p.foto?'Fotograf Degistir':'Fotograf Ekle')+'</button>'
+    +'<button class="ibtn" onclick="openPersonelModal(\''+p.id+'\')">Duzenle</button>'
+    +(p.aktif?'<button class="ibtn warn" onclick="istenCikar(\''+p.id+'\')">Isten Cikis</button>':'')
+    +'</div></div>'
+    +'<div class="section-title">Kisisel Bilgiler</div>'
+    +'<div class="info-grid">'
+    +'<div class="info-item"><label>TC</label><div class="val">'+(p.tc||'—')+'</div></div>'
+    +'<div class="info-item"><label>Dogum</label><div class="val">'+fmt(p.dogum)+'</div></div>'
+    +'<div class="info-item"><label>Cinsiyet</label><div class="val">'+(p.cinsiyet||'—')+'</div></div>'
+    +'<div class="info-item"><label>Medeni Hal</label><div class="val">'+(p.medeni||'—')+'</div></div>'
+    +'<div class="info-item"><label>Kan Grubu</label><div class="val">'+(p.kan||'—')+'</div></div>'
+    +'<div class="info-item"><label>Egitim</label><div class="val">'+(p.egitim||'—')+'</div></div>'
+    +'<div class="info-item"><label>Cep Tel</label><div class="val">'+(p.telefon||'—')+'</div></div>'
+    +'<div class="info-item"><label>E-posta</label><div class="val">'+(p.email||'—')+'</div></div>'
+    +'<div class="info-item"><label>Ise Giris</label><div class="val">'+fmt(p.ise_giris)+'</div></div>'
+    +'<div class="info-item"><label>Gorev</label><div class="val">'+(p.gorev||'—')+'</div></div>'
+    +'<div class="info-item"><label>Adres</label><div class="val">'+(p.adres||'—')+'</div></div>'
+    +'</div>';
+  if((p.acilEkipler||[]).length){
+    h+='<div class="section-title">Acil Durum Ekipleri</div><div style="display:flex;gap:6px;flex-wrap:wrap">';
+    p.acilEkipler.forEach(function(k){var e=tumE.find(function(x){return x.key===k;});if(e)h+='<span class="badge badge-orange">'+e.label+'</span>';});
+    h+='</div>';
+  }
+  h+='</div>'
+    +'<div class="personel-kart"><div style="font-size:14px;font-weight:700;margin-bottom:12px">Zorunlu Belgeler</div>'
+    +'<div class="belge-satir"><div class="belge-ad">ISG Egitimi</div>'
+    +'<div class="belge-tarihler">'
+    +'<div class="tarih-grup"><div class="tlabel">Egitim Tarihi</div><div class="tval">'+fmt(p.isg_tarih)+'</div></div>'
+    +'<div class="tarih-grup"><div class="tlabel">Sure</div><div class="tval">'+(SURELER[f.ts].isg_egitim/365)+' yil</div></div>'
+    +'<div class="tarih-grup"><div class="tlabel">Bitis</div><div class="tval" style="color:'+(st(ib)==='red'?'#dc2626':st(ib)==='amber'?'#d97706':'#16a34a')+'">'+fmt(ib)+'</div></div>'
+    +'<span class="badge badge-'+st(ib)+'">'+lbl(st(ib))+'</span>'
+    +'</div>'+(p.aktif?'<button class="ibtn" onclick="openPersonelModal(\''+p.id+'\')">Guncelle</button>':'')+'</div>'
+    +'<div class="belge-satir"><div class="belge-ad">Saglik Raporu</div>'
+    +'<div class="belge-tarihler">'
+    +'<div class="tarih-grup"><div class="tlabel">Rapor Tarihi</div><div class="tval">'+fmt(p.saglik_tarih)+'</div></div>'
+    +'<div class="tarih-grup"><div class="tlabel">Sure</div><div class="tval">'+(SURELER[f.ts].saglik/365)+' yil</div></div>'
+    +'<div class="tarih-grup"><div class="tlabel">Bitis</div><div class="tval" style="color:'+(st(sb)==='red'?'#dc2626':st(sb)==='amber'?'#d97706':'#16a34a')+'">'+fmt(sb)+'</div></div>'
+    +'<span class="badge badge-'+st(sb)+'">'+lbl(st(sb))+'</span>'
+    +'</div>'+(p.aktif?'<button class="ibtn" onclick="openPersonelModal(\''+p.id+'\')">Guncelle</button>':'')+'</div>'
+    +'</div>'
+    +'<div class="card"><div class="card-header"><span class="card-title">Ek Belgeler (Sure Takibi)</span>'+(p.aktif?'<button class="btn btn-primary" style="font-size:12px;padding:5px 12px" onclick="openPersonelBelgeModal(\''+p.id+'\')">+ Ekle</button>':'')+'</div>';
+  if(!p.belgeler.length){h+='<div style="padding:24px;text-align:center;color:#aaa;font-size:13px">Ek belge yok.</div>';}
+  else{
+    h+='<table><thead><tr><th>Belge Adi</th><th>Hazirlanma</th><th>Bitis</th><th>Durum</th><th>Kalan</th><th></th></tr></thead><tbody>';
+    p.belgeler.forEach(function(b){
+      var s=st(b.bitis);var d=dif(b.bitis);
+      var k=d<0?(Math.abs(d)+' gun gecti'):(d+' gun kaldi');
+      h+='<tr><td style="font-weight:600">'+b.ad+'</td><td style="color:#888">'+fmt(b.hazirlik)+'</td><td>'+fmt(b.bitis)+'</td>'
+        +'<td><span class="badge badge-'+s+'">'+lbl(s)+'</span></td>'
+        +'<td style="color:'+(s==='red'?'#dc2626':s==='amber'?'#d97706':'#16a34a')+';font-weight:500;font-size:12px">'+k+'</td>'
+        +'<td><div class="ibtns">'+(p.aktif?'<button class="ibtn" onclick="openPersonelBelgeModal(\''+p.id+'\',\''+b.id+'\')">Duzenle</button><button class="ibtn del" onclick="delPersBelge(\''+p.id+'\',\''+b.id+'\')">Sil</button>':'')+'</div></td></tr>';
+    });
+    h+='</tbody></table>';
+  }
+  h+='</div>'
+    +'<div class="card"><div class="card-header"><span class="card-title">Evraklar / Dosyalar</span>'+(p.aktif?'<button class="btn btn-primary" style="font-size:12px;padding:5px 12px" onclick="openPersDosyaModal(\''+p.id+'\')">+ Dosya Ekle</button>':'')+'</div>';
+  if(!(p.dosyalar||[]).length){h+='<div style="padding:24px;text-align:center;color:#aaa;font-size:13px">Henuz dosya yok.</div>';}
+  else{
+    (p.dosyalar||[]).forEach(function(d2){
+      h+='<div class="dosya-satir"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">'+fIcon(d2.tip)+'</div><div><div style="font-size:13px;font-weight:600">'+d2.ad+'</div><div style="font-size:11px;color:#aaa">'+fmt(d2.tarih)+(d2.tip?' &middot; '+d2.tip.toUpperCase():'')+'</div></div></div>'
+        +'<div class="ibtns">'+(d2.veri?'<button class="ibtn" onclick="dosyaIndir(\'pers\',\''+p.id+'\',\''+d2.id+'\')">Indir</button>':'')+(p.aktif?'<button class="ibtn del" onclick="delPersDosya(\''+p.id+'\',\''+d2.id+'\')">Sil</button>':'')+'</div></div>';
+    });
+  }
+  h+='</div>';
+  document.getElementById('main').innerHTML=h;updateBadge();
+}
+
+// NAV
+function goHome(){curView='home';curFirmaId=null;curPersonelId=null;curEkipmanId=null;render();}
+function goCikanlar(){curView='cikanlar';render();}
+function goFirma(id){curView='firma';curFirmaId=id;curTab='belgeler';curPersonelId=null;curEkipmanId=null;curBolum='hepsi';render();}
+function goPersonel(pid){var p=personeller.find(function(x){return x.id===pid;});if(p)curFirmaId=p.fid;curView='personel';curPersonelId=pid;render();}
+function goEkipman(eid){curView='ekipman';curEkipmanId=eid;render();}
+function switchTab(t){curTab=t;if(t==='personeller')curBolum='hepsi';render();}
+function setCurBolum(b){curBolum=b;renderFirma();}
+function setBreadcrumb(items){
+  var h='';
+  if(items.length>=1){
+    h='<span class="bc-link" onclick="goHome()">Isyerleri</span> / ';
+    if(items.length===2)h+='<span class="bc-link" onclick="goFirma(\''+curFirmaId+'\')">'+items[0].label+'</span> / <span style="color:#1a1a18">'+items[1].label+'</span>';
+    else h+='<span style="color:#1a1a18">'+items[0].label+'</span>';
+  }
+  document.getElementById('breadcrumb').innerHTML=h;
+}
+
+// STATS & BİLDİRİM
+function globalStats(){
+  var exp=0,son=0,ok=0;
+  firmalar.forEach(function(f){
+    f.belgeler.forEach(function(b){var s=st(b.bitis);if(s==='red')exp++;else if(s==='amber')son++;else if(s==='green')ok++;});
+    (f.ekipmanlar||[]).forEach(function(e){var s=st(ekipBit(e));if(s==='red')exp++;else if(s==='amber')son++;else if(s==='green')ok++;});
+  });
+  personeller.filter(function(p){return p.aktif;}).forEach(function(p){
+    [perIsg(p),perSaglik(p)].forEach(function(d){var s=st(d);if(s==='red')exp++;else if(s==='amber')son++;else if(s==='green')ok++;});
+    p.belgeler.forEach(function(b){var s=st(b.bitis);if(s==='red')exp++;else if(s==='amber')son++;else if(s==='green')ok++;});
+  });
+  return{exp:exp,son:son,ok:ok};
+}
+function getAlerts(){
+  var a=[];
+  firmalar.forEach(function(f){
+    f.belgeler.forEach(function(b){var s=st(b.bitis);if(s==='red'||s==='amber')a.push({id:'fb_'+f.id+'_'+b.id,type:s,name:f.ad,cat:'Firma',evrak:b.ad,tarih:b.bitis,dif:dif(b.bitis)});});
+    (f.ekipmanlar||[]).forEach(function(e){var bit=ekipBit(e);var s=st(bit);if(s==='red'||s==='amber')a.push({id:'eb_'+e.id,type:s,name:e.ad,cat:'Ekipman',sub:f.ad,evrak:'Periyodik Bakim',tarih:bit,dif:dif(bit)});});
+  });
+  personeller.filter(function(p){return p.aktif;}).forEach(function(p){
+    var f=firmalar.find(function(x){return x.id===p.fid;});
+    var checks=[{evrak:'ISG Egitimi',tarih:perIsg(p)},{evrak:'Saglik Raporu',tarih:perSaglik(p)}].concat(p.belgeler.map(function(b){return{evrak:b.ad,tarih:b.bitis};}));
+    checks.forEach(function(c,i){var s=st(c.tarih);if(s==='red'||s==='amber')a.push({id:'pb_'+p.id+'_'+i,type:s,name:p.ad,cat:'Personel',sub:f?f.ad:'',evrak:c.evrak,tarih:c.tarih,dif:dif(c.tarih)});});
+  });
+  return a.sort(function(a,b){return a.dif-b.dif;});
+}
+function updateBadge(){
+  var n=getAlerts().filter(function(a){return okunan.indexOf(a.id)<0;}).length;
+  var d=document.getElementById('ndot');
+  if(n>0){d.textContent=n;d.classList.remove('hidden');}else d.classList.add('hidden');
+}
+function openNotif(){
+  var alerts=getAlerts();
+  document.getElementById('ncnt').textContent=alerts.length?'('+alerts.length+' uyari)':'';
+  renderNotifList(alerts);
+  document.getElementById('nov').classList.remove('hidden');
+}
+function renderNotifList(alerts){
+  var h='';
+  if(!alerts.length)h='<div style="text-align:center;padding:24px;color:#aaa">Tum evraklar gecerli!</div>';
+  else alerts.forEach(function(a){
+    var isOk=okunan.indexOf(a.id)>=0;
+    var desc=a.dif<0?(Math.abs(a.dif)+' gun once sona erdi'):(a.dif+' gun icinde sona erecek');
+    h+='<div class="nitem '+(isOk?'read':'')+'"><div class="navt '+a.type+'">'+ini(a.name)+'</div>'
+      +'<div class="nbody"><div class="nname">'+a.name+(a.sub?' <span style="font-weight:400;color:#aaa;font-size:11px">('+a.sub+')</span>':'')+'</div>'
+      +'<div class="ndesc">'+a.evrak+' &middot; '+a.cat+'</div>'
+      +'<div class="ndate">'+fmt(a.tarih)+' &middot; '+desc+'</div></div>'
+      +'<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">'
+      +'<span class="badge badge-'+a.type+'">'+(a.type==='red'?'Gecmis':'Yakin')+'</span>'
+      +'<button class="ibtn" style="font-size:10px" onclick="notifOkundu(\''+a.id+'\')">'+(isOk?'Okundu ✓':'Okundu')+'</button>'
+      +'<button class="ibtn del" style="font-size:10px" onclick="notifSil(\''+a.id+'\')">Sil</button>'
+      +'</div></div>';
+  });
+  document.getElementById('nlist').innerHTML=h;
+}
+function notifOkundu(id){if(okunan.indexOf(id)<0)okunan.push(id);updateBadge();renderNotifList(getAlerts());}
+function notifSil(id){if(okunan.indexOf(id)<0)okunan.push(id);updateBadge();renderNotifList(getAlerts().filter(function(a){return okunan.indexOf(a.id)<0;}));}
+function tumunuOkundu(){getAlerts().forEach(function(a){if(okunan.indexOf(a.id)<0)okunan.push(a.id);});updateBadge();renderNotifList(getAlerts());}
+function okunanSil(){renderNotifList(getAlerts().filter(function(a){return okunan.indexOf(a.id)<0;}));updateBadge();}
+
+// İŞTEN ÇIKIŞ
+function istenCikar(pid){
+  var p=personeller.find(function(x){return x.id===pid;});if(!p)return;
+  var tarih=prompt(p.ad+' icin cikis tarihi (YYYY-AA-GG):',today.toISOString().slice(0,10));
+  if(tarih===null)return;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(tarih)){alert('Gecersiz format.');return;}
+  if(!confirm(p.ad+' — Cikis: '+fmt(tarih)+'\nOnayliyor musunuz?'))return;
+  p.aktif=false;p.cikis_tarihi=tarih;
+  if(curView==='personel')renderPersonelDetay();else render();
+}
+function geriAl(pid){
+  var p=personeller.find(function(x){return x.id===pid;});
+  if(!p||!confirm(p.ad+' tekrar aktif yapilsin mi?'))return;
+  p.aktif=true;p.cikis_tarihi='';render();
+}
+
+// HANDLE ADD
+function handleAdd(){
+  if(curView==='home'||curView==='cikanlar')openFirmaModal();
+  else if(curView==='firma'&&curTab==='bilgiler')openFirmaModal(curFirmaId);
+  else if(curView==='firma'&&curTab==='belgeler')openBelgeModal();
+  else if(curView==='firma'&&curTab==='personeller')openPersonelModal();
+  else if(curView==='firma'&&curTab==='ekipmanlar')openEkipmanModal();
+  else if(curView==='personel'){var p=personeller.find(function(x){return x.id===curPersonelId;});if(p&&p.aktif)openPersonelBelgeModal(curPersonelId);}
+}
+
+// MODAL HELPERS
+function showModal(title,body,showSave){
+  document.getElementById('mtitle').textContent=title;
+  document.getElementById('mbody').innerHTML=body;
+  if(showSave===false)document.getElementById('save-btn').classList.add('hidden');
+  else document.getElementById('save-btn').classList.remove('hidden');
+  document.getElementById('ov').classList.remove('hidden');
+}
+function closeModal(){document.getElementById('ov').classList.add('hidden');editId=null;editType=null;editSub=null;}
+
+// MODAL: FİRMA
+function openFirmaModal(id){
+  editId=id||null;editType='firma';
+  var f=id?firmalar.find(function(x){return x.id===id;}):null;
+  showModal(id?'Firma Duzenle':'Yeni Firma Ekle',
+    '<div class="frow"><label>Firma Adi</label><input id="f-ad" value="'+(f?f.ad:'')+'" placeholder="Firma adi"/></div>'
+    +'<div class="fgrid">'
+    +'<div class="frow"><label>Tehlike Sinifi</label><select id="f-ts"><option value="az" '+(f&&f.ts==='az'?'selected':'')+'>Az Tehlikeli</option><option value="teh" '+(f&&f.ts==='teh'?'selected':'')+'>Tehlikeli</option><option value="cok" '+(!f||f.ts==='cok'?'selected':'')+'>Cok Tehlikeli</option></select></div>'
+    +'<div class="frow"><label>NACE Kodu</label><input id="f-nace" value="'+(f?f.nace:'')+'" placeholder="4120"/></div>'
+    +'<div class="frow"><label>Vergi Kimlik No</label><input id="f-vergi" value="'+(f?f.vergi:'')+'" placeholder="1234567890"/></div>'
+    +'<div class="frow"><label>SGK Sicil No</label><input id="f-sgk" value="'+(f?f.sgk:'')+'" placeholder="123456"/></div>'
+    +'<div class="frow"><label>Firma Yetkilisi</label><input id="f-yetkili" value="'+(f?f.yetkili||'':'')+'" placeholder="Ad Soyad"/></div>'
+    +'<div class="frow"><label>Telefon</label><input id="f-tel" value="'+(f?f.telefon||'':'')+'" placeholder="0212 555 0000"/></div>'
+    +'<div class="frow"><label>E-posta</label><input id="f-email" value="'+(f?f.email||'':'')+'" placeholder="info@firma.com"/></div>'
+    +'</div>'
+    +'<div class="frow"><label>Adres</label><input id="f-adres" value="'+(f?f.adres:'')+'" placeholder="Il / Ilce"/></div>');
+}
+
+// MODAL: BÖLÜM
+function openBolumModal(fid){
+  editId=fid;editType='bolum';
+  var f=firmalar.find(function(x){return x.id===fid;});
+  renderBolumModalBody(f);
+}
+function renderBolumModalBody(f){
+  var liste=(f.bolumler||[]).map(function(b,i){return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0ea"><span class="badge badge-purple">'+b+'</span><button class="ibtn del" onclick="delBolum(\''+f.id+'\','+i+')">Sil</button></div>';}).join('');
+  showModal('Bolumleri Yonet',
+    '<div style="margin-bottom:12px;min-height:40px">'+(liste||'<div style="color:#aaa;font-size:13px">Henuz bolum yok.</div>')+'</div>'
+    +'<div style="display:flex;gap:8px"><input id="bolum-inp" placeholder="Yeni bolum adi..." style="flex:1;padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;" onkeydown="if(event.key===\'Enter\')addBolum(\''+f.id+'\')"/><button class="btn btn-primary" onclick="addBolum(\''+f.id+'\')">Ekle</button></div>');
+}
+function addBolum(fid){var f=firmalar.find(function(x){return x.id===fid;});var v=document.getElementById('bolum-inp').value.trim();if(!v||(f.bolumler||[]).indexOf(v)>=0){alert(v?'Bu bolum zaten var!':'Bos olamaz!');return;}if(!f.bolumler)f.bolumler=[];f.bolumler.push(v);renderBolumModalBody(f);}
+function delBolum(fid,idx){var f=firmalar.find(function(x){return x.id===fid;});if(!confirm('"'+f.bolumler[idx]+'" silinsin mi?'))return;f.bolumler.splice(idx,1);renderBolumModalBody(f);}
+
+// MODAL: ÖZEL EKİP
+function openOzelEkipModal(fid){
+  editId=fid;editType='ozel-ekip';
+  var f=firmalar.find(function(x){return x.id===fid;});if(!f.ozelEkipler)f.ozelEkipler=[];
+  renderOzelEkipBody(f);
+}
+function renderOzelEkipBody(f){
+  var liste=(f.ozelEkipler||[]).map(function(e,i){return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0ea;gap:8px"><span style="font-size:13px;font-weight:500">'+e.label+'</span><div style="display:flex;gap:8px;align-items:center"><span style="font-size:12px;color:#888">Gerekli: '+e.gerekli+'</span><button class="ibtn del" onclick="delOzelEkip(\''+f.id+'\','+i+')">Sil</button></div></div>';}).join('');
+  showModal('Ozel Ekip Yonet',
+    '<div style="margin-bottom:12px">'+(liste||'<div style="color:#aaa;font-size:13px">Ozel ekip yok.</div>')+'</div>'
+    +'<div class="section-title">Yeni Ekip</div>'
+    +'<div class="fgrid"><div class="frow"><label>Ekip Adi</label><input id="oe-ad" placeholder="Kimyasal Mudahale..." style="padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;width:100%"/></div>'
+    +'<div class="frow"><label>Gerekli Kisi</label><input id="oe-sayi" type="number" min="1" value="1" style="padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;width:100%"/></div></div>'
+    +'<button class="btn btn-primary" style="width:100%" onclick="addOzelEkip(\''+f.id+'\')">Ekle</button>');
+}
+function addOzelEkip(fid){var f=firmalar.find(function(x){return x.id===fid;});var ad=document.getElementById('oe-ad').value.trim();var sayi=parseInt(document.getElementById('oe-sayi').value)||1;if(!ad){alert('Ekip adi bos!');return;}f.ozelEkipler.push({key:'ozel_'+uid(),label:ad,gerekli:sayi});renderOzelEkipBody(f);}
+function delOzelEkip(fid,idx){var f=firmalar.find(function(x){return x.id===fid;});var e=f.ozelEkipler[idx];if(!confirm('"'+e.label+'" silinsin mi?'))return;personeller.filter(function(p){return p.fid===fid;}).forEach(function(p){p.acilEkipler=(p.acilEkipler||[]).filter(function(k){return k!==e.key;});});f.ozelEkipler.splice(idx,1);renderOzelEkipBody(f);}
+
+// MODAL: FİRMA BELGESİ
+function openBelgeModal(bid){
+  editId=bid||null;editType='firma-belge';
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});
+  var b=bid?f.belgeler.find(function(x){return x.id===bid;}):null;
+  var mevOpts=FIRMA_MEVZUAT.map(function(m){return '<option value="mevzuat_'+m.key+'" '+(b&&b.tip==='mevzuat'&&b.key===m.key?'selected':'')+'>'+m.label+' (mevzuat)</option>';}).join('');
+  showModal(bid?'Belgeyi Duzenle':'Yeni Belge Ekle',
+    '<div class="mevzuat-note">Mevzuat belgelerinde bitis tarihi tehlike sinifina gore otomatik hesaplanir.</div>'
+    +'<div class="frow"><label>Belge Turu</label><select id="b-tip" onchange="onBTip()">'+mevOpts+'<option value="manuel" '+(b&&b.tip==='manuel'?'selected':'')+'>Diger / Ozel Belge</option></select></div>'
+    +'<div class="frow hidden" id="b-ad-row"><label>Belge Adi</label><input id="b-ad" value="'+(b&&b.tip==='manuel'?b.ad:'')+'" placeholder="SGK Borcu Yoktur..."/></div>'
+    +'<div class="fgrid"><div class="frow"><label>Hazirlanma Tarihi</label><input id="b-haz" type="date" value="'+(b?b.hazirlik:'')+'" oninput="calcBBit()"/></div>'
+    +'<div class="frow hidden" id="b-sure-row"><label>Gecerlilik Suresi</label><select id="b-sure" oninput="calcBBit()"><option value="90">3 Ay</option><option value="180">6 Ay</option><option value="365" selected>1 Yil</option><option value="730">2 Yil</option><option value="1095">3 Yil</option><option value="1460">4 Yil</option><option value="1825">5 Yil</option></select></div></div>'
+    +'<div class="frow"><label>Bitis Tarihi</label><input id="b-bit" type="date" value="'+(b?b.bitis:'')+'"/><div class="hint hidden" id="b-hint"></div><div class="hint-neutral">Hazirlanma tarihi girince otomatik hesaplanir.</div></div>');
+  onBTip();
+}
+function onBTip(){var v=document.getElementById('b-tip').value;var m=v==='manuel';document.getElementById('b-ad-row').classList.toggle('hidden',!m);document.getElementById('b-sure-row').classList.toggle('hidden',!m);calcBBit();}
+function calcBBit(){var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f)return;var v=document.getElementById('b-tip').value;var h=document.getElementById('b-haz').value;if(!h)return;var g=v.startsWith('mevzuat_')?SURELER[f.ts][v.replace('mevzuat_','')]||365:parseInt(document.getElementById('b-sure').value)||365;var bit=addD(h,g);document.getElementById('b-bit').value=bit;var el=document.getElementById('b-hint');el.textContent='Otomatik: '+fmt(bit);el.classList.remove('hidden');}
+
+// MODAL: BELGE DOSYA
+function openBelgeDosya(fid,bid){
+  editId=bid;editType='belge-dosya';editSub=fid;
+  var f=firmalar.find(function(x){return x.id===fid;});
+  var b=f.belgeler.find(function(x){return x.id===bid;});
+  var liste=(b.pdfler||[]).map(function(d,i){return '<div class="dosya-satir"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">'+fIcon(d.tip)+'</div><div><div style="font-size:13px;font-weight:600">'+d.ad+'</div><div style="font-size:11px;color:#aaa">'+(d.tip?d.tip.toUpperCase():'')+'</div></div></div><div class="ibtns">'+(d.veri?'<button class="ibtn" onclick="belgeDosyaIndir(\''+fid+'\',\''+bid+'\',\''+d.id+'\')">Indir</button>':'')+'<button class="ibtn del" onclick="delBelgeDosya(\''+fid+'\',\''+bid+'\','+i+')">Sil</button></div></div>';}).join('');
+  showModal(b.ad+' — Dosyalar',
+    '<div style="margin-bottom:12px">'+(liste||'<div style="color:#aaa;font-size:13px;padding:12px 0">Henuz dosya yok.</div>')+'</div>'
+    +'<div class="upload-area" onclick="document.getElementById(\'bdosya-inp\').click()">'
+    +'<div style="font-size:24px;margin-bottom:6px">&#128206;</div><div style="font-size:13px;color:#888">PDF, PNG, JPG — max 5MB</div>'
+    +'<input type="file" id="bdosya-inp" accept=".pdf,.png,.jpg,.jpeg" onchange="onBDosyaSec(this,\''+fid+'\',\''+bid+'\')"/></div>', false);
+}
+function onBDosyaSec(input,fid,bid){
+  var file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){alert('5MB dan buyuk olamaz!');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var f=firmalar.find(function(x){return x.id===fid;});var b=f.belgeler.find(function(x){return x.id===bid;});
+    if(!b.pdfler)b.pdfler=[];
+    var tip=file.name.split('.').pop().toLowerCase();
+    b.pdfler.push({id:uid(),ad:file.name,tip:tip,veri:e.target.result});
+    openBelgeDosya(fid,bid);
+  };reader.readAsDataURL(file);
+}
+function belgeDosyaIndir(fid,bid,did){var f=firmalar.find(function(x){return x.id===fid;});var b=f.belgeler.find(function(x){return x.id===bid;});var d=b.pdfler.find(function(x){return x.id===did;});if(!d||!d.veri)return;var a=document.createElement('a');a.href=d.veri;a.download=d.ad;a.click();}
+function delBelgeDosya(fid,bid,idx){if(!confirm('Bu dosya silinsin mi?'))return;var f=firmalar.find(function(x){return x.id===fid;});var b=f.belgeler.find(function(x){return x.id===bid;});b.pdfler.splice(idx,1);openBelgeDosya(fid,bid);}
+
+// MODAL: PERSONEL
+function openPersonelModal(id){
+  editId=id||null;editType='personel';
+  var p=id?personeller.find(function(x){return x.id===id;}):null;
+  var f=firmalar.find(function(x){return x.id===(p?p.fid:curFirmaId);});
+  var bl=f?f.bolumler||[]:[];
+  var oe=f?f.ozelEkipler||[]:[];
+  var tumE=ACIL_EKIP.concat(oe);
+  var ma=p?p.acilEkipler||[]:[];
+  var kanOpts=['A Rh+','A Rh-','B Rh+','B Rh-','AB Rh+','AB Rh-','0 Rh+','0 Rh-'].map(function(k){return '<option value="'+k+'" '+(p&&p.kan===k?'selected':'')+'>'+k+'</option>';}).join('');
+  var egOpts=['Ilkokul','Ortaokul','Lise','On Lisans','Lisans','Yuksek Lisans','Doktora'].map(function(e){return '<option value="'+e+'" '+(p&&p.egitim===e?'selected':'')+'>'+e+'</option>';}).join('');
+  var ekipCb=tumE.map(function(e){return '<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #e5e5e0;border-radius:8px;cursor:pointer;font-size:13px"><input type="checkbox" id="ae-'+e.key+'" '+(ma.indexOf(e.key)>=0?'checked':'')+' style="width:auto;accent-color:#1a5fa8"/>'+e.label+'</label>';}).join('');
+  showModal(id?'Personel Duzenle':'Yeni Personel Ekle',
+    '<div class="section-title">Kisisel Bilgiler</div>'
+    +'<div class="fgrid"><div class="frow" style="grid-column:1/-1"><label>Ad Soyad</label><input id="p-ad" value="'+(p?p.ad:'')+'" placeholder="Ad Soyad"/></div>'
+    +'<div class="frow"><label>TC Kimlik No</label><input id="p-tc" value="'+(p?p.tc:'')+'" maxlength="11" placeholder="12345678901"/></div>'
+    +'<div class="frow"><label>Dogum Tarihi</label><input id="p-dogum" type="date" value="'+(p?p.dogum:'')+'"/></div>'
+    +'<div class="frow"><label>Cinsiyet</label><select id="p-cins"><option value="">—</option><option value="Erkek" '+(p&&p.cinsiyet==='Erkek'?'selected':'')+'>Erkek</option><option value="Kadin" '+(p&&p.cinsiyet==='Kadin'?'selected':'')+'>Kadin</option></select></div>'
+    +'<div class="frow"><label>Medeni Hal</label><select id="p-med"><option value="">—</option><option value="Evli" '+(p&&p.medeni==='Evli'?'selected':'')+'>Evli</option><option value="Bekar" '+(p&&p.medeni==='Bekar'?'selected':'')+'>Bekar</option><option value="Dul" '+(p&&p.medeni==='Dul'?'selected':'')+'>Dul</option></select></div>'
+    +'<div class="frow"><label>Kan Grubu</label><select id="p-kan"><option value="">—</option>'+kanOpts+'</select></div>'
+    +'<div class="frow"><label>Egitim Durumu</label><select id="p-eg"><option value="">—</option>'+egOpts+'</select></div>'
+    +'<div class="frow"><label>Cep Telefonu</label><input id="p-tel" value="'+(p?p.telefon||'':'')+'" placeholder="0532 000 0000"/></div>'
+    +'<div class="frow"><label>E-posta</label><input id="p-email" value="'+(p?p.email||'':'')+'" placeholder="ad@mail.com"/></div>'
+    +'<div class="frow"><label>Ise Giris Tarihi</label><input id="p-ise" type="date" value="'+(p?p.ise_giris:'')+'"/></div>'
+    +'<div class="frow"><label>Gorevi / Meslegi</label><input id="p-gorev" value="'+(p?p.gorev:'')+'" placeholder="Operator..."/></div>'
+    +'<div class="frow"><label>Bolum</label><select id="p-bolum"><option value="">— Bolum —</option>'+bl.map(function(b){return '<option value="'+b+'" '+(p&&p.bolum===b?'selected':'')+'>'+b+'</option>';}).join('')+'</select></div>'
+    +'</div>'
+    +'<div class="frow"><label>Adres</label><input id="p-adres" value="'+(p?p.adres||'':'')+'" placeholder="Ilce / Il"/></div>'
+    +'<div class="section-title">Acil Durum Ekibi</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+ekipCb+'</div>'
+    +'<div class="section-title">Zorunlu Belge Tarihleri <span style="font-weight:400;text-transform:none;font-size:11px;color:#888">— yapildigi tarih ('+(f?TS_LABEL[f.ts]:'—')+')</span></div>'
+    +'<div class="fgrid">'
+    +'<div class="frow"><label>ISG Egitim Tarihi</label><input id="p-isg" type="date" value="'+(p?p.isg_tarih:'')+'" oninput="calcPBit(\'isg\')"/><div class="hint hidden" id="hint-isg"></div></div>'
+    +'<div class="frow"><label>Saglik Raporu Tarihi</label><input id="p-sag" type="date" value="'+(p?p.saglik_tarih:'')+'" oninput="calcPBit(\'sag\')"/><div class="hint hidden" id="hint-sag"></div></div>'
+    +'</div>');
+  if(p&&p.isg_tarih)calcPBit('isg');if(p&&p.saglik_tarih)calcPBit('sag');
+}
+function calcPBit(tip){var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f)return;var id=tip==='isg'?'p-isg':'p-sag';var tarih=document.getElementById(id).value;if(!tarih)return;var g=tip==='isg'?SURELER[f.ts].isg_egitim:SURELER[f.ts].saglik;var bit=addD(tarih,g);var el=document.getElementById('hint-'+tip);el.textContent='Bitis: '+fmt(bit)+' ('+(g/365)+' yil)';el.classList.remove('hidden');}
+
+// MODAL: PERSONEL DOSYA
+function openPersDosyaModal(pid){
+  editType='pers-dosya';editSub=pid;
+  var p=personeller.find(function(x){return x.id===pid;});
+  var liste=(p.dosyalar||[]).map(function(d,i){return '<div class="dosya-satir"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">'+fIcon(d.tip)+'</div><div><div style="font-size:13px;font-weight:600">'+d.ad+'</div><div style="font-size:11px;color:#aaa">'+fmt(d.tarih)+(d.tip?' &middot; '+d.tip.toUpperCase():'')+'</div></div></div><div class="ibtns">'+(d.veri?'<button class="ibtn" onclick="dosyaIndir(\'pers\',\''+pid+'\',\''+d.id+'\')">Indir</button>':'')+'<button class="ibtn del" onclick="delPersDosyaMod(\''+pid+'\','+i+')">Sil</button></div></div>';}).join('');
+  showModal('Evrak / Dosya Ekle',
+    '<div style="margin-bottom:12px">'+(liste||'<div style="color:#aaa;font-size:13px;padding:12px 0">Henuz dosya yok.</div>')+'</div>'
+    +'<div class="upload-area" onclick="document.getElementById(\'pdosya-inp\').click()">'
+    +'<div style="font-size:24px;margin-bottom:6px">&#128206;</div><div style="font-size:13px;color:#888">PDF, PNG, JPG — max 5MB</div>'
+    +'<input type="file" id="pdosya-inp" accept=".pdf,.png,.jpg,.jpeg" onchange="onPersDosyaSec(this,\''+pid+'\')"/></div>', false);
+}
+function onPersDosyaSec(input,pid){
+  var file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){alert('5MB dan buyuk olamaz!');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var p=personeller.find(function(x){return x.id===pid;});if(!p.dosyalar)p.dosyalar=[];
+    var tip=file.name.split('.').pop().toLowerCase();
+    p.dosyalar.push({id:uid(),ad:file.name,tip:tip,veri:e.target.result,tarih:today.toISOString().slice(0,10)});
+    openPersDosyaModal(pid);
+  };reader.readAsDataURL(file);
+}
+function delPersDosyaMod(pid,idx){if(!confirm('Bu dosya silinsin mi?'))return;var p=personeller.find(function(x){return x.id===pid;});p.dosyalar.splice(idx,1);openPersDosyaModal(pid);}
+function dosyaIndir(tip,id,did){
+  var items=tip==='pers'?personeller.find(function(x){return x.id===id;}).dosyalar:(firmalar.find(function(x){return x.id===curFirmaId;}).ekipmanlar||[]).find(function(x){return x.id===id;}).belgeler;
+  var d=items.find(function(x){return x.id===did;});if(!d||!d.veri)return;var a=document.createElement('a');a.href=d.veri;a.download=d.ad;a.click();
+}
+
+// MODAL: PERSONEL EK BELGE
+function openPersonelBelgeModal(pid,bid){
+  editId=bid||null;editType='pers-belge';editSub=pid;
+  var p=personeller.find(function(x){return x.id===pid;});var f=firmalar.find(function(x){return x.id===(p?p.fid:curFirmaId);});
+  var b=bid&&p?p.belgeler.find(function(x){return x.id===bid;}):null;
+  var mevOpts=PERS_MEVZUAT.map(function(m){return '<option value="mevzuat_'+m.key+'" '+(b&&b.tip==='mevzuat'&&b.key===m.key?'selected':'')+'>'+m.label+' (mevzuat)</option>';}).join('');
+  showModal(bid?'Ek Belgeyi Duzenle':'Yeni Ek Belge Ekle',
+    '<div class="mevzuat-note">ISG Egitimi ve Saglik Raporu personel formundan yonetilir.</div>'
+    +'<div class="frow"><label>Belge Turu</label><select id="pb-tip" onchange="onPBTip(\''+pid+'\')">'+mevOpts+'<option value="manuel" '+(b&&b.tip==='manuel'?'selected':'')+'>Diger / Ozel Belge</option></select></div>'
+    +'<div class="frow hidden" id="pb-ad-row"><label>Belge Adi</label><input id="pb-ad" value="'+(b&&b.tip==='manuel'?b.ad:'')+'" placeholder="Operator Sertifikasi..."/></div>'
+    +'<div class="fgrid"><div class="frow"><label>Hazirlanma Tarihi</label><input id="pb-haz" type="date" value="'+(b?b.hazirlik:'')+'" oninput="calcPBBit(\''+pid+'\')"/></div>'
+    +'<div class="frow hidden" id="pb-sure-row"><label>Gecerlilik Suresi</label><select id="pb-sure" oninput="calcPBBit(\''+pid+'\')"><option value="90">3 Ay</option><option value="180">6 Ay</option><option value="365" selected>1 Yil</option><option value="730">2 Yil</option><option value="1095">3 Yil</option><option value="1460">4 Yil</option><option value="1825">5 Yil</option></select></div></div>'
+    +'<div class="frow"><label>Bitis Tarihi</label><input id="pb-bit" type="date" value="'+(b?b.bitis:'')+'"/><div class="hint hidden" id="pb-hint"></div></div>');
+  onPBTip(pid);
+}
+function onPBTip(pid){var v=document.getElementById('pb-tip').value;var m=v==='manuel';document.getElementById('pb-ad-row').classList.toggle('hidden',!m);document.getElementById('pb-sure-row').classList.toggle('hidden',!m);calcPBBit(pid);}
+function calcPBBit(pid){var p=personeller.find(function(x){return x.id===pid;});var f=firmalar.find(function(x){return x.id===(p?p.fid:curFirmaId);});if(!f)return;var v=document.getElementById('pb-tip').value;var h=document.getElementById('pb-haz').value;if(!h)return;var g=v.startsWith('mevzuat_')?SURELER[f.ts][v.replace('mevzuat_','')]||365:parseInt(document.getElementById('pb-sure').value)||365;var bit=addD(h,g);document.getElementById('pb-bit').value=bit;var el=document.getElementById('pb-hint');el.textContent='Otomatik: '+fmt(bit);el.classList.remove('hidden');}
+
+// MODAL: EKİPMAN
+function openEkipmanModal(eid){
+  editId=eid||null;editType='ekipman';
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});
+  var e=eid?(f.ekipmanlar||[]).find(function(x){return x.id===eid;}):null;
+  var perOpts=PERIYOT.map(function(p){return '<option value="'+p.v+'" '+(e&&e.periyot==p.v?'selected':'')+'>'+p.l+'</option>';}).join('');
+  showModal(eid?'Ekipman Duzenle':'Yeni Ekipman Ekle',
+    '<div class="section-title">Ekipman Bilgileri</div>'
+    +'<div class="fgrid"><div class="frow" style="grid-column:1/-1"><label>Ekipman Adi</label><input id="ek-ad" value="'+(e?e.ad:'')+'" placeholder="Forklift, Kompressor, Vinc..."/></div>'
+    +'<div class="frow"><label>Marka</label><input id="ek-marka" value="'+(e?e.marka||'':'')+'" placeholder="Toyota..."/></div>'
+    +'<div class="frow"><label>Model</label><input id="ek-model" value="'+(e?e.model||'':'')+'" placeholder="GA15..."/></div>'
+    +'<div class="frow"><label>Seri Numarasi</label><input id="ek-seri" value="'+(e?e.seri||'':'')+'" placeholder="SN-2023-001"/></div>'
+    +'<div class="frow"><label>Konum</label><input id="ek-konum" value="'+(e?e.konum||'':'')+'" placeholder="Depo A..."/></div></div>'
+    +'<div class="section-title">Sorumlu Personel</div>'
+    +'<div class="fgrid"><div class="frow"><label>Ad Soyad</label><input id="ek-soruml" value="'+(e?e.sorumlAd||'':'')+'" placeholder="Personel adi"/></div>'
+    +'<div class="frow"><label>Telefon</label><input id="ek-sorumltel" value="'+(e?e.sorumlTel||'':'')+'" placeholder="0532 000 0000"/></div></div>'
+    +'<div class="section-title">Periyodik Bakim</div>'
+    +'<div class="fgrid"><div class="frow"><label>Son Bakim Tarihi</label><input id="ek-bakim" type="date" value="'+(e?e.sonBakim||'':'')+'" oninput="calcEkBit()"/></div>'
+    +'<div class="frow"><label>Bakim Periyodu</label><select id="ek-per" onchange="calcEkBit()"><option value="">— Secin —</option>'+perOpts+'</select></div></div>'
+    +'<div class="frow"><label>Bakim Bitis Tarihi</label><input id="ek-bit" type="date" value="'+(e?e.bitTarih||'':'')+'"/><div class="hint hidden" id="ek-hint"></div></div>');
+}
+function calcEkBit(){var b=document.getElementById('ek-bakim').value;var p=document.getElementById('ek-per').value;if(!b||!p)return;var bit=addD(b,parseInt(p));document.getElementById('ek-bit').value=bit;var el=document.getElementById('ek-hint');el.textContent='Otomatik: '+fmt(bit);el.classList.remove('hidden');}
+
+// MODAL: EKİPMAN BELGE
+function openEkipBelgeModal(eid){
+  editType='ekip-belge';editSub=eid;
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});
+  var e=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});
+  var liste=(e.belgeler||[]).map(function(d,i){return '<div class="dosya-satir"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">'+fIcon(d.tip)+'</div><div><div style="font-size:13px;font-weight:600">'+d.ad+'</div><div style="font-size:11px;color:#aaa">'+(d.tip?d.tip.toUpperCase():'')+'</div></div></div><div class="ibtns">'+(d.veri?'<button class="ibtn" onclick="dosyaIndir(\'ekip\',\''+eid+'\',\''+d.id+'\')">Indir</button>':'')+'<button class="ibtn del" onclick="delEkipBelgeMod(\''+eid+'\','+i+')">Sil</button></div></div>';}).join('');
+  showModal('Ekipman Belgesi Ekle',
+    '<div style="margin-bottom:12px">'+(liste||'<div style="color:#aaa;font-size:13px;padding:12px 0">Henuz belge yok.</div>')+'</div>'
+    +'<div class="upload-area" onclick="document.getElementById(\'ekdosya-inp\').click()">'
+    +'<div style="font-size:24px;margin-bottom:6px">&#128206;</div><div style="font-size:13px;color:#888">PDF, PNG, JPG — max 5MB</div>'
+    +'<input type="file" id="ekdosya-inp" accept=".pdf,.png,.jpg,.jpeg" onchange="onEkipBelgeSec(this,\''+eid+'\')"/></div>', false);
+}
+function onEkipBelgeSec(input,eid){
+  var file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){alert('5MB dan buyuk olamaz!');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var f=firmalar.find(function(x){return x.id===curFirmaId;});
+    var ek=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});
+    if(!ek.belgeler)ek.belgeler=[];
+    var tip=file.name.split('.').pop().toLowerCase();
+    ek.belgeler.push({id:uid(),ad:file.name,tip:tip,veri:e.target.result});
+    openEkipBelgeModal(eid);
+  };reader.readAsDataURL(file);
+}
+function delEkipBelgeMod(eid,idx){if(!confirm('Bu belge silinsin mi?'))return;var f=firmalar.find(function(x){return x.id===curFirmaId;});var e=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});e.belgeler.splice(idx,1);openEkipBelgeModal(eid);}
+
+// MODAL: EKİPMAN FOTOĞRAF
+function openEkipFotoModal(eid){
+  editType='ekip-foto';editSub=eid;
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});
+  var e=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});
+  var galeri=(e.fotolar||[]).map(function(src,i){return '<div style="position:relative"><img src="'+src+'" style="width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;border:1px solid #e5e5e0"/><button onclick="delEkipFotoMod(\''+eid+'\','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px">✕</button></div>';}).join('');
+  showModal('Ekipman Fotograflari',
+    (galeri?'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-bottom:14px">'+galeri+'</div>':'')
+    +'<div class="upload-area" onclick="document.getElementById(\'ekfoto-inp\').click()">'
+    +'<div style="font-size:24px;margin-bottom:6px">&#128247;</div><div style="font-size:13px;color:#888">PNG, JPG — max 2MB</div>'
+    +'<input type="file" id="ekfoto-inp" accept="image/*" onchange="onEkipFotoSec(this,\''+eid+'\')"/></div>', false);
+}
+function onEkipFotoSec(input,eid){
+  var file=input.files[0];if(!file)return;
+  if(file.size>2*1024*1024){alert('2MB dan buyuk olamaz!');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var f=firmalar.find(function(x){return x.id===curFirmaId;});
+    var ek=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});
+    if(!ek.fotolar)ek.fotolar=[];ek.fotolar.push(e.target.result);openEkipFotoModal(eid);
+  };reader.readAsDataURL(file);
+}
+function delEkipFotoMod(eid,idx){if(!confirm('Bu fotograf silinsin mi?'))return;var f=firmalar.find(function(x){return x.id===curFirmaId;});var e=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});e.fotolar.splice(idx,1);openEkipFotoModal(eid);}
+function delEkipFoto(eid,idx){if(!confirm('Bu fotograf silinsin mi?'))return;var f=firmalar.find(function(x){return x.id===curFirmaId;});var e=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});e.fotolar.splice(idx,1);goEkipman(eid);}
+function delEkipBelge(eid,did){if(!confirm('Bu belge silinsin mi?'))return;var f=firmalar.find(function(x){return x.id===curFirmaId;});var e=(f.ekipmanlar||[]).find(function(x){return x.id===eid;});e.belgeler=(e.belgeler||[]).filter(function(x){return x.id!==did;});goEkipman(eid);}
+
+// MODAL: PERSONEL FOTOĞRAF
+function openFotoModal(pid){
+  editType='foto';editSub=pid;
+  var p=personeller.find(function(x){return x.id===pid;});
+  showModal('Profil Fotografi',
+    '<div class="upload-area" onclick="document.getElementById(\'pfoto-inp\').click()">'
+    +(p.foto?'<img src="'+p.foto+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:3px solid #e5e5e0"/>'
+      :'<div style="width:80px;height:80px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#1e40af;margin:0 auto 10px;">'+ini(p.ad)+'</div>')
+    +'<div style="font-size:13px;color:#888">Tiklayin</div><div style="font-size:11px;color:#aaa;margin-top:4px">JPG veya PNG, max 2MB</div>'
+    +'<input type="file" id="pfoto-inp" accept="image/*" onchange="onPFotoSec(this,\''+pid+'\')"/></div>'
+    +(p.foto?'<div style="margin-top:12px;text-align:center"><button class="ibtn del" onclick="persFotoSil(\''+pid+'\')">Fotografı Kaldir</button></div>':''), false);
+}
+function onPFotoSec(input,pid){var file=input.files[0];if(!file)return;if(file.size>2*1024*1024){alert('2MB dan buyuk olamaz!');return;}var reader=new FileReader();reader.onload=function(e){personeller.find(function(x){return x.id===pid;}).foto=e.target.result;closeModal();if(curView==='personel')renderPersonelDetay();else render();};reader.readAsDataURL(file);}
+function persFotoSil(pid){var p=personeller.find(function(x){return x.id===pid;});if(p)p.foto='';closeModal();if(curView==='personel')renderPersonelDetay();else render();}
+
+// SAVE
+function save(){
+  if(editType==='firma')saveFirma();
+  else if(editType==='bolum'||editType==='ozel-ekip'){closeModal();if(curView==='firma')renderFirma();else render();}
+  else if(editType==='firma-belge')saveFBelge();
+  else if(editType==='personel')savePersonel();
+  else if(editType==='pers-belge')savePersBelge();
+  else if(editType==='ekipman')saveEkipman();
+}
+function saveFirma(){
+  var ad=document.getElementById('f-ad').value.trim();if(!ad){alert('Firma adi zorunlu!');return;}
+  var data={ad:ad,ts:document.getElementById('f-ts').value,nace:document.getElementById('f-nace').value.trim(),vergi:document.getElementById('f-vergi').value.trim(),sgk:document.getElementById('f-sgk').value.trim(),yetkili:document.getElementById('f-yetkili').value.trim(),telefon:document.getElementById('f-tel').value.trim(),email:document.getElementById('f-email').value.trim(),adres:document.getElementById('f-adres').value.trim()};
+  if(editId){var f=firmalar.find(function(x){return x.id===editId;});Object.keys(data).forEach(function(k){f[k]=data[k];});}
+  else firmalar.push(Object.assign({id:uid(),bolumler:[],ozelEkipler:[],belgeler:[],ekipmanlar:[]},data));
+  closeModal();render();
+}
+function saveFBelge(){
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f)return;
+  var tv=document.getElementById('b-tip').value;var haz=document.getElementById('b-haz').value;var bit=document.getElementById('b-bit').value;
+  if(!haz||!bit){alert('Tarihler zorunlu!');return;}
+  var rec;
+  if(tv.startsWith('mevzuat_')){var key=tv.replace('mevzuat_','');var m=FIRMA_MEVZUAT.find(function(x){return x.key===key;});rec={id:editId||uid(),ad:m?m.label:key,tip:'mevzuat',key:key,hazirlik:haz,bitis:bit,pdfler:[]};}
+  else{var a=document.getElementById('b-ad').value.trim();if(!a){alert('Belge adi zorunlu!');return;}rec={id:editId||uid(),ad:a,tip:'manuel',sure:parseInt(document.getElementById('b-sure').value),hazirlik:haz,bitis:bit,pdfler:[]};}
+  if(editId){var idx=f.belgeler.findIndex(function(x){return x.id===editId;});rec.pdfler=f.belgeler[idx].pdfler||[];f.belgeler[idx]=rec;}else f.belgeler.push(rec);
+  closeModal();renderFirma();
+}
+function savePersonel(){
+  var ad=document.getElementById('p-ad').value.trim();if(!ad){alert('Ad Soyad zorunlu!');return;}
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});
+  var tumE=ACIL_EKIP.concat(f?f.ozelEkipler||[]:[]);
+  var ae=tumE.map(function(e){return e.key;}).filter(function(k){var el=document.getElementById('ae-'+k);return el&&el.checked;});
+  var data={ad:ad,tc:document.getElementById('p-tc').value.trim(),dogum:document.getElementById('p-dogum').value,cinsiyet:document.getElementById('p-cins').value,medeni:document.getElementById('p-med').value,kan:document.getElementById('p-kan').value,egitim:document.getElementById('p-eg').value,telefon:document.getElementById('p-tel').value.trim(),email:document.getElementById('p-email').value.trim(),ise_giris:document.getElementById('p-ise').value,gorev:document.getElementById('p-gorev').value.trim(),bolum:document.getElementById('p-bolum').value,adres:document.getElementById('p-adres').value.trim(),isg_tarih:document.getElementById('p-isg').value,saglik_tarih:document.getElementById('p-sag').value,acilEkipler:ae};
+  if(editId){var p=personeller.find(function(x){return x.id===editId;});Object.keys(data).forEach(function(k){p[k]=data[k];});}
+  else personeller.push(Object.assign({id:uid(),fid:curFirmaId,aktif:true,cikis_tarihi:'',foto:'',belgeler:[],dosyalar:[]},data));
+  closeModal();if(curView==='personel')renderPersonelDetay();else render();
+}
+function savePersBelge(){
+  var pid=editSub;var p=personeller.find(function(x){return x.id===pid;});if(!p)return;
+  var tv=document.getElementById('pb-tip').value;var haz=document.getElementById('pb-haz').value;var bit=document.getElementById('pb-bit').value;
+  if(!haz||!bit){alert('Tarihler zorunlu!');return;}
+  var rec;
+  if(tv.startsWith('mevzuat_')){var key=tv.replace('mevzuat_','');var m=PERS_MEVZUAT.find(function(x){return x.key===key;});rec={id:editId||uid(),ad:m?m.label:key,tip:'mevzuat',key:key,hazirlik:haz,bitis:bit};}
+  else{var a=document.getElementById('pb-ad').value.trim();if(!a){alert('Belge adi zorunlu!');return;}rec={id:editId||uid(),ad:a,tip:'manuel',sure:parseInt(document.getElementById('pb-sure').value),hazirlik:haz,bitis:bit};}
+  if(editId){var idx=p.belgeler.findIndex(function(x){return x.id===editId;});p.belgeler[idx]=rec;}else p.belgeler.push(rec);
+  closeModal();goPersonel(pid);
+}
+function saveEkipman(){
+  var ad=document.getElementById('ek-ad').value.trim();if(!ad){alert('Ekipman adi zorunlu!');return;}
+  var per=parseInt(document.getElementById('ek-per').value)||0;var son=document.getElementById('ek-bakim').value;
+  var bit=document.getElementById('ek-bit').value||(son&&per?addD(son,per):'');
+  var rec={ad:ad,marka:document.getElementById('ek-marka').value.trim(),model:document.getElementById('ek-model').value.trim(),seri:document.getElementById('ek-seri').value.trim(),konum:document.getElementById('ek-konum').value.trim(),sorumlAd:document.getElementById('ek-soruml').value.trim(),sorumlTel:document.getElementById('ek-sorumltel').value.trim(),sonBakim:son,periyot:per,bitTarih:bit};
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f.ekipmanlar)f.ekipmanlar=[];
+  if(editId){var idx=f.ekipmanlar.findIndex(function(x){return x.id===editId;});var old=f.ekipmanlar[idx];f.ekipmanlar[idx]=Object.assign({},old,rec);}
+  else f.ekipmanlar.push(Object.assign({id:uid(),belgeler:[],fotolar:[]},rec));
+  closeModal();renderFirma();
+}
+
+// SİL
+function delFirma(id){if(!confirm('Bu firmayı ve tüm personellerini silmek istediğinizden emin misiniz?'))return;firmalar=firmalar.filter(function(x){return x.id!==id;});personeller=personeller.filter(function(x){return x.fid!==id;});render();}
+function delBelge(fid,bid){if(!confirm('Bu belgeyi silmek istediğinizden emin misiniz?'))return;var f=firmalar.find(function(x){return x.id===fid;});if(f)f.belgeler=f.belgeler.filter(function(x){return x.id!==bid;});renderFirma();}
+function delPersonel(id){if(!confirm('Bu personeli silmek istediğinizden emin misiniz?'))return;personeller=personeller.filter(function(x){return x.id!==id;});render();}
+function delPersBelge(pid,bid){if(!confirm('Bu belgeyi silmek istediğinizden emin misiniz?'))return;var p=personeller.find(function(x){return x.id===pid;});if(p){p.belgeler=p.belgeler.filter(function(x){return x.id!==bid;});goPersonel(pid);}}
+function delPersDosya(pid,did){if(!confirm('Bu dosyayı silmek istediğinizden emin misiniz?'))return;var p=personeller.find(function(x){return x.id===pid;});if(p){p.dosyalar=(p.dosyalar||[]).filter(function(x){return x.id!==did;});goPersonel(pid);}}
+function delEkipman(eid){if(!confirm('Bu ekipmanı silmek istediğinizden emin misiniz?'))return;var f=firmalar.find(function(x){return x.id===curFirmaId;});if(f)f.ekipmanlar=(f.ekipmanlar||[]).filter(function(x){return x.id!==eid;});renderFirma();}
+
+render();
+</script>
+</body>
+</html>
