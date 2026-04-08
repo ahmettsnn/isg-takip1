@@ -695,10 +695,10 @@ function openNotif(){
 }
 function renderNotifList(alerts){
   var h='';
-  if(!alerts.length)h='<div style="text-align:center;padding:24px;color:#aaa">Tum evraklar gecerli!</div>';
+  if(!alerts.length)h='<div style="text-align:center;padding:24px;color:#aaa">Tüm evraklar geçerli!</div>';
   else alerts.forEach(function(a){
     var isOk=okunan.indexOf(a.id)>=0;
-    var desc=a.dif<0?(Math.abs(a.dif)+' gun once sona erdi'):(a.dif+' gun icinde sona erecek');
+    var desc=a.dif<0?(Math.abs(a.dif)+' gün önce sona erdi'):(a.dif+' gün içinde sona erecek');
     h+='<div class="nitem '+(isOk?'read':'')+'"><div class="navt '+a.type+'">'+ini(a.name)+'</div>'
       +'<div class="nbody"><div class="nname">'+a.name+(a.sub?' <span style="font-weight:400;color:#aaa;font-size:11px">('+a.sub+')</span>':'')+'</div>'
       +'<div class="ndesc">'+a.evrak+' &middot; '+a.cat+'</div>'
@@ -719,9 +719,9 @@ function okunanSil(){renderNotifList(getAlerts().filter(function(a){return okuna
 // \u0130\u015eTEN \u00c7IKI\u015e
 function istenCikar(pid){
   var p=personeller.find(function(x){return x.id===pid;});if(!p)return;
-  var tarih=prompt(p.ad+' icin cikis tarihi (YYYY-AA-GG):',today.toISOString().slice(0,10));
+  var tarih=prompt(p.ad+' için çıkış tarihi (YYYY-AA-GG):',today.toISOString().slice(0,10));
   if(tarih===null)return;
-  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(tarih)){alert('Gecersiz format.');return;}
+  if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(tarih)){alert('Geçersiz format.');return;}
   if(!confirm(p.ad+' \u2014 Cikis: '+fmt(tarih)+'\
 Onayliyor musunuz?'))return;
   p.aktif=false;p.cikis_tarihi=tarih;
@@ -729,7 +729,7 @@ Onayliyor musunuz?'))return;
 }
 function geriAl(pid){
   var p=personeller.find(function(x){return x.id===pid;});
-  if(!p||!confirm(p.ad+' tekrar aktif yapilsin mi?'))return;
+  if(!p||!confirm(p.ad+' tekrar aktif yapılsın mı?'))return;
   p.aktif=true;p.cikis_tarihi='';render();
 }
 
