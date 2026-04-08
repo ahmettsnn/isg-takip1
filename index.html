@@ -502,7 +502,7 @@ function renderEkipmanDetay(){
     +'<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="ibtn" onclick="openEkipFotoModal(\''+e.id+'\')">Fotograf Ekle</button><button class="ibtn" onclick="openEkipmanModal(\''+e.id+'\')">Duzenle</button></div>'
     +'</div>'
     +'<div class="info-grid">'
-    +'<div class="info-item"><label>Ekipman Adi</label><div class="val">'+e.ad+'</div></div>'
+    +'<div class="info-item"><label>Ekipman Adı</label><div class="val">'+e.ad+'</div></div>'
     +'<div class="info-item"><label>Marka</label><div class="val">'+(e.marka||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>Model</label><div class="val">'+(e.model||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>Seri No</label><div class="val">'+(e.seri||'\u2014')+'</div></div>'
@@ -558,15 +558,15 @@ function renderPersonelDetay(){
     +'<div class="section-title">Kisisel Bilgiler</div>'
     +'<div class="info-grid">'
     +'<div class="info-item"><label>TC</label><div class="val">'+(p.tc||'\u2014')+'</div></div>'
-    +'<div class="info-item"><label>Dogum</label><div class="val">'+fmt(p.dogum)+'</div></div>'
+    +'<div class="info-item"><label>Doğum</label><div class="val">'+fmt(p.dogum)+'</div></div>'
     +'<div class="info-item"><label>Cinsiyet</label><div class="val">'+(p.cinsiyet||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>Medeni Hal</label><div class="val">'+(p.medeni||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>Kan Grubu</label><div class="val">'+(p.kan||'\u2014')+'</div></div>'
-    +'<div class="info-item"><label>Egitim</label><div class="val">'+(p.egitim||'\u2014')+'</div></div>'
+    +'<div class="info-item"><label>Eğitim</label><div class="val">'+(p.egitim||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>Cep Tel</label><div class="val">'+(p.telefon||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>E-posta</label><div class="val">'+(p.email||'\u2014')+'</div></div>'
-    +'<div class="info-item"><label>Ise Giris</label><div class="val">'+fmt(p.ise_giris)+'</div></div>'
-    +'<div class="info-item"><label>Gorev</label><div class="val">'+(p.gorev||'\u2014')+'</div></div>'
+    +'<div class="info-item"><label>İşe Giris</label><div class="val">'+fmt(p.ise_giris)+'</div></div>'
+    +'<div class="info-item"><label>Görev</label><div class="val">'+(p.gorev||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>Adres</label><div class="val">'+(p.adres||'\u2014')+'</div></div>'
     +'</div>';
   if((p.acilEkipler||[]).length){
@@ -759,9 +759,9 @@ function openFirmaModal(id){
   editId=id||null;editType='firma';
   var f=id?firmalar.find(function(x){return x.id===id;}):null;
   showModal(id?'Firma Duzenle':'Yeni Firma Ekle',
-    '<div class="frow"><label>Firma Adi</label><input id="f-ad" value="'+(f?f.ad:'')+'" placeholder="Firma adi"/></div>'
+    '<div class="frow"><label>Firma Adı</label><input id="f-ad" value="'+(f?f.ad:'')+'" placeholder="Firma adi"/></div>'
     +'<div class="fgrid">'
-    +'<div class="frow"><label>Tehlike Sinifi</label><select id="f-ts"><option value="az" '+(f&&f.ts==='az'?'selected':'')+'>Az Tehlikeli</option><option value="teh" '+(f&&f.ts==='teh'?'selected':'')+'>Tehlikeli</option><option value="cok" '+(!f||f.ts==='cok'?'selected':'')+'>Cok Tehlikeli</option></select></div>'
+    +'<div class="frow"><label>Tehlike Sınıfı</label><select id="f-ts"><option value="az" '+(f&&f.ts==='az'?'selected':'')+'>Az Tehlikeli</option><option value="teh" '+(f&&f.ts==='teh'?'selected':'')+'>Tehlikeli</option><option value="cok" '+(!f||f.ts==='cok'?'selected':'')+'>Cok Tehlikeli</option></select></div>'
     +'<div class="frow"><label>NACE Kodu</label><input id="f-nace" value="'+(f?f.nace:'')+'" placeholder="4120"/></div>'
     +'<div class="frow"><label>Vergi Kimlik No</label><input id="f-vergi" value="'+(f?f.vergi:'')+'" placeholder="1234567890"/></div>'
     +'<div class="frow"><label>SGK Sicil No</label><input id="f-sgk" value="'+(f?f.sgk:'')+'" placeholder="123456"/></div>'
@@ -798,8 +798,8 @@ function renderOzelEkipBody(f){
   showModal('Ozel Ekip Yonet',
     '<div style="margin-bottom:12px">'+(liste||'<div style="color:#aaa;font-size:13px">Ozel ekip yok.</div>')+'</div>'
     +'<div class="section-title">Yeni Ekip</div>'
-    +'<div class="fgrid"><div class="frow"><label>Ekip Adi</label><input id="oe-ad" placeholder="Kimyasal Mudahale..." style="padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;width:100%"/></div>'
-    +'<div class="frow"><label>Gerekli Kisi</label><input id="oe-sayi" type="number" min="1" value="1" style="padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;width:100%"/></div></div>'
+    +'<div class="fgrid"><div class="frow"><label>Ekip Adı</label><input id="oe-ad" placeholder="Kimyasal Mudahale..." style="padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;width:100%"/></div>'
+    +'<div class="frow"><label>Gerekli Kişi</label><input id="oe-sayi" type="number" min="1" value="1" style="padding:8px 11px;border:1px solid #e5e5e0;border-radius:8px;font-size:13px;font-family:inherit;width:100%"/></div></div>'
     +'<button class="btn btn-primary" style="width:100%" onclick="addOzelEkip(\''+f.id+'\')">Ekle</button>');
 }
 function addOzelEkip(fid){var f=firmalar.find(function(x){return x.id===fid;});var ad=document.getElementById('oe-ad').value.trim();var sayi=parseInt(document.getElementById('oe-sayi').value)||1;if(!ad){alert('Ekip adi bos!');return;}f.ozelEkipler.push({key:'ozel_'+uid(),label:ad,gerekli:sayi});renderOzelEkipBody(f);}
@@ -813,11 +813,11 @@ function openBelgeModal(bid){
   var mevOpts=FIRMA_MEVZUAT.map(function(m){return '<option value="mevzuat_'+m.key+'" '+(b&&b.tip==='mevzuat'&&b.key===m.key?'selected':'')+'>'+m.label+' (mevzuat)</option>';}).join('');
   showModal(bid?'Belgeyi Duzenle':'Yeni Belge Ekle',
     '<div class="mevzuat-note">Mevzuat belgelerinde bitis tarihi tehlike sinifina gore otomatik hesaplanir.</div>'
-    +'<div class="frow"><label>Belge Turu</label><select id="b-tip" onchange="onBTip()">'+mevOpts+'<option value="manuel" '+(b&&b.tip==='manuel'?'selected':'')+'>Diger / Ozel Belge</option></select></div>'
-    +'<div class="frow hidden" id="b-ad-row"><label>Belge Adi</label><input id="b-ad" value="'+(b&&b.tip==='manuel'?b.ad:'')+'" placeholder="SGK Borcu Yoktur..."/></div>'
-    +'<div class="fgrid"><div class="frow"><label>Hazirlanma Tarihi</label><input id="b-haz" type="date" value="'+(b?b.hazirlik:'')+'" oninput="calcBBit()"/></div>'
-    +'<div class="frow hidden" id="b-sure-row"><label>Gecerlilik Suresi</label><select id="b-sure" oninput="calcBBit()"><option value="90">3 Ay</option><option value="180">6 Ay</option><option value="365" selected>1 Yil</option><option value="730">2 Yil</option><option value="1095">3 Yil</option><option value="1460">4 Yil</option><option value="1825">5 Yil</option></select></div></div>'
-    +'<div class="frow"><label>Bitis Tarihi</label><input id="b-bit" type="date" value="'+(b?b.bitis:'')+'"/><div class="hint hidden" id="b-hint"></div><div class="hint-neutral">Hazirlanma tarihi girince otomatik hesaplanir.</div></div>');
+    +'<div class="frow"><label>Belge Türü</label><select id="b-tip" onchange="onBTip()">'+mevOpts+'<option value="manuel" '+(b&&b.tip==='manuel'?'selected':'')+'>Diger / Ozel Belge</option></select></div>'
+    +'<div class="frow hidden" id="b-ad-row"><label>Belge Adı</label><input id="b-ad" value="'+(b&&b.tip==='manuel'?b.ad:'')+'" placeholder="SGK Borcu Yoktur..."/></div>'
+    +'<div class="fgrid"><div class="frow"><label>Hazırlanma Tarihi</label><input id="b-haz" type="date" value="'+(b?b.hazirlik:'')+'" oninput="calcBBit()"/></div>'
+    +'<div class="frow hidden" id="b-sure-row"><label>Geçerlilik Süresi</label><select id="b-sure" oninput="calcBBit()"><option value="90">3 Ay</option><option value="180">6 Ay</option><option value="365" selected>1 Yil</option><option value="730">2 Yil</option><option value="1095">3 Yil</option><option value="1460">4 Yil</option><option value="1825">5 Yil</option></select></div></div>'
+    +'<div class="frow"><label>Bitiş Tarihi</label><input id="b-bit" type="date" value="'+(b?b.bitis:'')+'"/><div class="hint hidden" id="b-hint"></div><div class="hint-neutral">Hazirlanma tarihi girince otomatik hesaplanir.</div></div>');
   onBTip();
 }
 function onBTip(){var v=document.getElementById('b-tip').value;var m=v==='manuel';document.getElementById('b-ad-row').classList.toggle('hidden',!m);document.getElementById('b-sure-row').classList.toggle('hidden',!m);calcBBit();}
@@ -870,20 +870,20 @@ function openPersonelModal(id){
     +'<div class="frow"><label>Cinsiyet</label><select id="p-cins"><option value="">\u2014</option><option value="Erkek" '+(p&&p.cinsiyet==='Erkek'?'selected':'')+'>Erkek</option><option value="Kadin" '+(p&&p.cinsiyet==='Kadin'?'selected':'')+'>Kadin</option></select></div>'
     +'<div class="frow"><label>Medeni Hal</label><select id="p-med"><option value="">\u2014</option><option value="Evli" '+(p&&p.medeni==='Evli'?'selected':'')+'>Evli</option><option value="Bekar" '+(p&&p.medeni==='Bekar'?'selected':'')+'>Bekar</option><option value="Dul" '+(p&&p.medeni==='Dul'?'selected':'')+'>Dul</option></select></div>'
     +'<div class="frow"><label>Kan Grubu</label><select id="p-kan"><option value="">\u2014</option>'+kanOpts+'</select></div>'
-    +'<div class="frow"><label>Egitim Durumu</label><select id="p-eg"><option value="">\u2014</option>'+egOpts+'</select></div>'
+    +'<div class="frow"><label>Eğitim Durumu</label><select id="p-eg"><option value="">\u2014</option>'+egOpts+'</select></div>'
     +'<div class="frow"><label>Cep Telefonu</label><input id="p-tel" value="'+(p?p.telefon||'':'')+'" placeholder="0532 000 0000"/></div>'
     +'<div class="frow"><label>E-posta</label><input id="p-email" value="'+(p?p.email||'':'')+'" placeholder="ad@mail.com"/></div>'
-    +'<div class="frow"><label>Ise Giris Tarihi</label><input id="p-ise" type="date" value="'+(p?p.ise_giris:'')+'"/></div>'
-    +'<div class="frow"><label>Gorevi / Meslegi</label><input id="p-gorev" value="'+(p?p.gorev:'')+'" placeholder="Operator..."/></div>'
-    +'<div class="frow"><label>Bolum</label><select id="p-bolum"><option value="">\u2014 Bolum \u2014</option>'+bl.map(function(b){return '<option value="'+b+'" '+(p&&p.bolum===b?'selected':'')+'>'+b+'</option>';}).join('')+'</select></div>'
+    +'<div class="frow"><label>İşe Giriş Tarihi</label><input id="p-ise" type="date" value="'+(p?p.ise_giris:'')+'"/></div>'
+    +'<div class="frow"><label>Görevi / Mesleği</label><input id="p-gorev" value="'+(p?p.gorev:'')+'" placeholder="Operator..."/></div>'
+    +'<div class="frow"><label>Bölüm</label><select id="p-bolum"><option value="">\u2014 Bolum \u2014</option>'+bl.map(function(b){return '<option value="'+b+'" '+(p&&p.bolum===b?'selected':'')+'>'+b+'</option>';}).join('')+'</select></div>'
     +'</div>'
     +'<div class="frow"><label>Adres</label><input id="p-adres" value="'+(p?p.adres||'':'')+'" placeholder="Ilce / Il"/></div>'
     +'<div class="section-title">Acil Durum Ekibi</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+ekipCb+'</div>'
     +'<div class="section-title">Zorunlu Belge Tarihleri <span style="font-weight:400;text-transform:none;font-size:11px;color:#888">\u2014 yapildigi tarih ('+(f?TS_LABEL[f.ts]:'\u2014')+')</span></div>'
     +'<div class="fgrid">'
-    +'<div class="frow"><label>ISG Egitim Tarihi</label><input id="p-isg" type="date" value="'+(p?p.isg_tarih:'')+'" oninput="calcPBit(\'isg\')"/><div class="hint hidden" id="hint-isg"></div></div>'
-    +'<div class="frow"><label>Saglik Raporu Tarihi</label><input id="p-sag" type="date" value="'+(p?p.saglik_tarih:'')+'" oninput="calcPBit(\'sag\')"/><div class="hint hidden" id="hint-sag"></div></div>'
+    +'<div class="frow"><label>İSG Eğitim Tarihi</label><input id="p-isg" type="date" value="'+(p?p.isg_tarih:'')+'" oninput="calcPBit(\'isg\')"/><div class="hint hidden" id="hint-isg"></div></div>'
+    +'<div class="frow"><label>Sağlık Raporu Tarihi</label><input id="p-sag" type="date" value="'+(p?p.saglik_tarih:'')+'" oninput="calcPBit(\'sag\')"/><div class="hint hidden" id="hint-sag"></div></div>'
     +'</div>');
   if(p&&p.isg_tarih)calcPBit('isg');if(p&&p.saglik_tarih)calcPBit('sag');
 }
@@ -925,11 +925,11 @@ function openPersonelBelgeModal(pid,bid){
   var mevOpts=PERS_MEVZUAT.map(function(m){return '<option value="mevzuat_'+m.key+'" '+(b&&b.tip==='mevzuat'&&b.key===m.key?'selected':'')+'>'+m.label+' (mevzuat)</option>';}).join('');
   showModal(bid?'Ek Belgeyi Duzenle':'Yeni Ek Belge Ekle',
     '<div class="mevzuat-note">ISG Egitimi ve Saglik Raporu personel formundan yonetilir.</div>'
-    +'<div class="frow"><label>Belge Turu</label><select id="pb-tip" onchange="onPBTip(\''+pid+'\')">'+mevOpts+'<option value="manuel" '+(b&&b.tip==='manuel'?'selected':'')+'>Diger / Ozel Belge</option></select></div>'
-    +'<div class="frow hidden" id="pb-ad-row"><label>Belge Adi</label><input id="pb-ad" value="'+(b&&b.tip==='manuel'?b.ad:'')+'" placeholder="Operator Sertifikasi..."/></div>'
+    +'<div class="frow"><label>Belge Türü</label><select id="pb-tip" onchange="onPBTip(\''+pid+'\')">'+mevOpts+'<option value="manuel" '+(b&&b.tip==='manuel'?'selected':'')+'>Diger / Ozel Belge</option></select></div>'
+    +'<div class="frow hidden" id="pb-ad-row"><label>Belge Adı</label><input id="pb-ad" value="'+(b&&b.tip==='manuel'?b.ad:'')+'" placeholder="Operator Sertifikasi..."/></div>'
     +'<div class="fgrid"><div class="frow"><label>Hazirlanma Tarihi</label><input id="pb-haz" type="date" value="'+(b?b.hazirlik:'')+'" oninput="calcPBBit(\''+pid+'\')"/></div>'
     +'<div class="frow hidden" id="pb-sure-row"><label>Gecerlilik Suresi</label><select id="pb-sure" oninput="calcPBBit(\''+pid+'\')"><option value="90">3 Ay</option><option value="180">6 Ay</option><option value="365" selected>1 Yil</option><option value="730">2 Yil</option><option value="1095">3 Yil</option><option value="1460">4 Yil</option><option value="1825">5 Yil</option></select></div></div>'
-    +'<div class="frow"><label>Bitis Tarihi</label><input id="pb-bit" type="date" value="'+(b?b.bitis:'')+'"/><div class="hint hidden" id="pb-hint"></div></div>');
+    +'<div class="frow"><label>Bitiş Tarihi</label><input id="pb-bit" type="date" value="'+(b?b.bitis:'')+'"/><div class="hint hidden" id="pb-hint"></div></div>');
   onPBTip(pid);
 }
 function onPBTip(pid){var v=document.getElementById('pb-tip').value;var m=v==='manuel';document.getElementById('pb-ad-row').classList.toggle('hidden',!m);document.getElementById('pb-sure-row').classList.toggle('hidden',!m);calcPBBit(pid);}
@@ -943,18 +943,18 @@ function openEkipmanModal(eid){
   var perOpts=PERIYOT.map(function(p){return '<option value="'+p.v+'" '+(e&&e.periyot==p.v?'selected':'')+'>'+p.l+'</option>';}).join('');
   showModal(eid?'Ekipman Duzenle':'Yeni Ekipman Ekle',
     '<div class="section-title">Ekipman Bilgileri</div>'
-    +'<div class="fgrid"><div class="frow" style="grid-column:1/-1"><label>Ekipman Adi</label><input id="ek-ad" value="'+(e?e.ad:'')+'" placeholder="Forklift, Kompressor, Vinc..."/></div>'
+    +'<div class="fgrid"><div class="frow" style="grid-column:1/-1"><label>Ekipman Adı</label><input id="ek-ad" value="'+(e?e.ad:'')+'" placeholder="Forklift, Kompressor, Vinc..."/></div>'
     +'<div class="frow"><label>Marka</label><input id="ek-marka" value="'+(e?e.marka||'':'')+'" placeholder="Toyota..."/></div>'
     +'<div class="frow"><label>Model</label><input id="ek-model" value="'+(e?e.model||'':'')+'" placeholder="GA15..."/></div>'
-    +'<div class="frow"><label>Seri Numarasi</label><input id="ek-seri" value="'+(e?e.seri||'':'')+'" placeholder="SN-2023-001"/></div>'
+    +'<div class="frow"><label>Seri Numarası</label><input id="ek-seri" value="'+(e?e.seri||'':'')+'" placeholder="SN-2023-001"/></div>'
     +'<div class="frow"><label>Konum</label><input id="ek-konum" value="'+(e?e.konum||'':'')+'" placeholder="Depo A..."/></div></div>'
     +'<div class="section-title">Sorumlu Personel</div>'
     +'<div class="fgrid"><div class="frow"><label>Ad Soyad</label><input id="ek-soruml" value="'+(e?e.sorumlAd||'':'')+'" placeholder="Personel adi"/></div>'
     +'<div class="frow"><label>Telefon</label><input id="ek-sorumltel" value="'+(e?e.sorumlTel||'':'')+'" placeholder="0532 000 0000"/></div></div>'
-    +'<div class="section-title">Periyodik Bakim</div>'
-    +'<div class="fgrid"><div class="frow"><label>Son Bakim Tarihi</label><input id="ek-bakim" type="date" value="'+(e?e.sonBakim||'':'')+'" oninput="calcEkBit()"/></div>'
-    +'<div class="frow"><label>Bakim Periyodu</label><select id="ek-per" onchange="calcEkBit()"><option value="">\u2014 Secin \u2014</option>'+perOpts+'</select></div></div>'
-    +'<div class="frow"><label>Bakim Bitis Tarihi</label><input id="ek-bit" type="date" value="'+(e?e.bitTarih||'':'')+'"/><div class="hint hidden" id="ek-hint"></div></div>');
+    +'<div class="section-title">Periyodik Kontrol</div>'
+    +'<div class="fgrid"><div class="frow"><label>Son Kontrol Tarihi</label><input id="ek-bakim" type="date" value="'+(e?e.sonBakim||'':'')+'" oninput="calcEkBit()"/></div>'
+    +'<div class="frow"><label>Kontrol Periyodu</label><select id="ek-per" onchange="calcEkBit()"><option value="">\u2014 Secin \u2014</option>'+perOpts+'</select></div></div>'
+    +'<div class="frow"><label>Kontrol Bitiş Tarihi</label><input id="ek-bit" type="date" value="'+(e?e.bitTarih||'':'')+'"/><div class="hint hidden" id="ek-hint"></div></div>');
 }
 function calcEkBit(){var b=document.getElementById('ek-bakim').value;var p=document.getElementById('ek-per').value;if(!b||!p)return;var bit=addD(b,parseInt(p));document.getElementById('ek-bit').value=bit;var el=document.getElementById('ek-hint');el.textContent='Otomatik: '+fmt(bit);el.classList.remove('hidden');}
 
@@ -1118,11 +1118,11 @@ function calcFirmaStats(f){
 function renderFirmaStats(f){
   var s=calcFirmaStats(f);
   return '<div class="firma-stats">'
-    +'<div class="stat"><div class="stat-num c-red">'+s.exp+'</div><div class="stat-label">Suresi Gecmis</div></div>'
-    +'<div class="stat"><div class="stat-num c-amber">'+s.yakin+'</div><div class="stat-label">30 Gunde Doluyor</div></div>'
-    +'<div class="stat"><div class="stat-num c-green">'+s.ok+'</div><div class="stat-label">Gecerli</div></div>'
+    +'<div class="stat"><div class="stat-num c-red">'+s.exp+'</div><div class="stat-label">Süresi Geçmis</div></div>'
+    +'<div class="stat"><div class="stat-num c-amber">'+s.yakin+'</div><div class="stat-label">30 Günde Doluyor</div></div>'
+    +'<div class="stat"><div class="stat-num c-green">'+s.ok+'</div><div class="stat-label">Geçerli</div></div>'
     +'<div class="stat"><div class="stat-num c-blue">'+s.aktif+'</div><div class="stat-label">Aktif Personel</div></div>'
-    +'<div class="stat"><div class="stat-num" style="color:#888">'+s.cikan+'</div><div class="stat-label">Isten Cikan</div></div>'
+    +'<div class="stat"><div class="stat-num" style="color:#888">'+s.cikan+'</div><div class="stat-label">İşten Çıkan</div></div>'
     +'</div>';
 }
 
@@ -1196,18 +1196,18 @@ function openToplantiModal(tid){
   var psListesi=personeller.filter(function(p){return p.fid===curFirmaId&&p.aktif!==false;});
   document.getElementById('mtitle').textContent=tid?'Toplantıyı Düzenle':'Yeni Toplantı Kaydı';
   document.getElementById('mbody').innerHTML=
-    '<div class="frow"><label>Toplanti Basligi</label><input id="top-baslik" value="'+(t?t.baslik:'')+'" placeholder="ISG Kurul Toplantisi - Ocak 2025"/></div>'+
-    '<div class="fgrid"><div class="frow"><label>Toplanti Tarihi</label><input id="top-tarih" type="date" value="'+(t?t.tarih:'')+'"/></div>'+
-    '<div class="frow"><label>Sonraki Toplanti Tarihi</label><input id="top-sonraki" type="date" value="'+(t&&t.sonraki?t.sonraki:'')+'"/></div></div>'+
-    '<div class="frow"><label>Gundem Maddeleri</label><div id="gundem-container"></div><button class="ibtn" style="margin-top:6px" onclick="gundemEkle()">+ Madde Ekle</button></div>'+
-    '<div class="frow"><label>Katilimcilar</label><div class="katilimci-list" id="katilimci-chips"></div>'+
+    '<div class="frow"><label>Toplantı Başlığı</label><input id="top-baslik" value="'+(t?t.baslik:'')+'" placeholder="İSG Kurul Toplantısı - Ocak 2025"/></div>'+
+    '<div class="fgrid"><div class="frow"><label>Toplantı Tarihi</label><input id="top-tarih" type="date" value="'+(t?t.tarih:'')+'"/></div>'+
+    '<div class="frow"><label>Sonraki Toplantı Tarihi</label><input id="top-sonraki" type="date" value="'+(t&&t.sonraki?t.sonraki:'')+'"/></div></div>'+
+    '<div class="frow"><label>Gündem Maddeleri</label><div id="gundem-container"></div><button class="ibtn" style="margin-top:6px" onclick="gundemEkle()">+ Madde Ekle</button></div>'+
+    '<div class="frow"><label>Katılımcılar</label><div class="katilimci-list" id="katilimci-chips"></div>'+
     '<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">'+
-    '<select id="kat-sec" style="flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit"><option value="">-- Personel Sec --</option>'+
+    '<select id="kat-sec" style="flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit"><option value="">-- Personel Seç --</option>'+
     psListesi.map(function(p){return '<option value="'+p.ad+'">'+p.ad+'</option>';}).join('')+
     '</select><button class="ibtn" onclick="katilimciEkleSecim()">Ekle</button></div>'+
     '<div style="display:flex;gap:6px;margin-top:6px"><input id="kat-elle" placeholder="Elle isim yaz..." style="flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit"/>'+
     '<button class="ibtn" onclick="katilimciEkleElle()">Ekle</button></div></div>'+
-    '<div class="frow"><label>Alinan Kararlar</label><div id="karar-container"></div><button class="ibtn" style="margin-top:6px" onclick="kararEkle()">+ Karar Ekle</button></div>';
+    '<div class="frow"><label>Alınan Kararlar</label><div id="karar-container"></div><button class="ibtn" style="margin-top:6px" onclick="kararEkle()">+ Karar Ekle</button></div>';
   document.getElementById('ov').classList.remove('hidden');
   renderGundem();renderKatilimci();renderKarar();
 }
@@ -1259,7 +1259,7 @@ function saveToplanti(){
   closeModal();renderFirma();
 }
 function delToplanti(fid,tid){
-  if(!confirm('Bu toplanti kaydi silinsin mi?'))return;
+  if(!confirm('Bu toplantı kaydı silinsin mi?'))return;
   var f=firmalar.find(function(x){return x.id===fid;});
   if(f)f.toplantilar=(f.toplantilar||[]).filter(function(x){return x.id!==tid;});
   renderFirma();
