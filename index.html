@@ -362,8 +362,8 @@ function renderBilgiler(f){
   var pSayisi=personeller.filter(function(p){return p.fid===f.id&&p.aktif;}).length;
   var tumE=ACIL_EKIP.concat(f.ozelEkipler||[]);
   var h='<div class="card" style="padding:20px"><div class="info-grid">'
-    +'<div class="info-item"><label>Firma Adi</label><div class="val">'+f.ad+'</div></div>'
-    +'<div class="info-item"><label>Tehlike Sinifi</label><div class="val"><span class="'+TS_CLASS[f.ts]+'">'+TS_LABEL[f.ts]+'</span></div></div>'
+    +'<div class="info-item"><label>Firma Adı</label><div class="val">'+f.ad+'</div></div>'
+    +'<div class="info-item"><label>Tehlike Sınıfı</label><div class="val"><span class="'+TS_CLASS[f.ts]+'">'+TS_LABEL[f.ts]+'</span></div></div>'
     +'<div class="info-item"><label>NACE Kodu</label><div class="val">'+(f.nace||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>Vergi Kimlik No</label><div class="val">'+(f.vergi||'\u2014')+'</div></div>'
     +'<div class="info-item"><label>SGK Sicil No</label><div class="val">'+(f.sgk||'\u2014')+'</div></div>'
