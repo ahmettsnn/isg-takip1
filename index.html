@@ -260,7 +260,7 @@ function fmt(d){return d?new Date(d).toLocaleDateString('tr-TR'):'\u2014';}
 function dif(d){return d?Math.floor((new Date(d)-today)/86400000):9999;}
 function st(d){if(!d)return'gray';var v=dif(d);return v<0?'red':v<=30?'amber':'green';}
 function worst(a){var f=a.filter(function(x){return x!=='gray';});if(!f.length)return'gray';if(f.indexOf('red')>=0)return'red';if(f.indexOf('amber')>=0)return'amber';return'green';}
-function lbl(s){return s==='red'?'Suresi Gecmis':s==='amber'?'30 Gun Icinde':s==='gray'?'Girilmedi':'Gecerli';}
+function lbl(s){return s==='red'?'Süresi Gecmis':s==='amber'?'30 Gun Icinde':s==='gray'?'Girilmedi':'Geçerli';}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
 function ini(ad){return ad.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();}
 function gerekliE(ts,key,sayi){return Math.max(1,Math.ceil(sayi/(ACIL_KURAL[ts][key]||50)));}
@@ -372,7 +372,7 @@ function renderCikanlar(){
   var cikanlar=personeller.filter(function(p){return !p.aktif;});
   var h='<div class="nav-tabs"><button class="nav-tab" onclick="goHome()">Isyerleri</button><button class="nav-tab active">Isten Cikanlar ('+cikanlar.length+')</button></div>'
     +'<div class="card"><div class="card-header"><span class="card-title">Isten Cikan Personeller</span></div>';
-  if(!cikanlar.length){h+='<div class="empty-state">Isten cikan personel yok.</div>';}
+  if(!cikanlar.length){h+='<div class="empty-state">İşten çıkan personel yok.</div>';}
   else{
     h+='<table><thead><tr><th></th><th>Ad Soyad</th><th>Firma</th><th>Gorevi</th><th>Ise Giris</th><th>Cikis Tarihi</th><th></th></tr></thead><tbody>';
     cikanlar.forEach(function(p){
