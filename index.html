@@ -236,8 +236,8 @@ body{display:flex;}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <h2 style="margin:0">Bildirimler <span id="ncnt" style="font-size:13px;font-weight:400;color:#aaa"></span></h2>
       <div style="display:flex;gap:6px">
-        <button class="ibtn" onclick="tumunuOkundu()">Okundu Olarak İşaretle</button>
-        <button class="ibtn del" onclick="okunanSil()">Okunanları Sil</button>
+        <button class="ibtn" onclick="tumunuOkundu()">T\u00fcm\u00fcn\u00fc Okundu</button>
+        <button class="ibtn del" onclick="okunanSil()">Okunanlar\u0131 Sil</button>
       </div>
     </div>
     <div id="nlist"></div>
@@ -260,7 +260,7 @@ function fmt(d){return d?new Date(d).toLocaleDateString('tr-TR'):'\u2014';}
 function dif(d){return d?Math.floor((new Date(d)-today)/86400000):9999;}
 function st(d){if(!d)return'gray';var v=dif(d);return v<0?'red':v<=30?'amber':'green';}
 function worst(a){var f=a.filter(function(x){return x!=='gray';});if(!f.length)return'gray';if(f.indexOf('red')>=0)return'red';if(f.indexOf('amber')>=0)return'amber';return'green';}
-function lbl(s){return s==='red'?'Süresi Gecmis':s==='amber'?'30 Gun Icinde':s==='gray'?'Girilmedi':'Geçerli';}
+function lbl(s){return s==='red'?'Suresi Gecmis':s==='amber'?'30 Gun Icinde':s==='gray'?'Girilmedi':'Gecerli';}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
 function ini(ad){return ad.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();}
 function gerekliE(ts,key,sayi){return Math.max(1,Math.ceil(sayi/(ACIL_KURAL[ts][key]||50)));}
@@ -372,7 +372,7 @@ function renderCikanlar(){
   var cikanlar=personeller.filter(function(p){return !p.aktif;});
   var h='<div class="nav-tabs"><button class="nav-tab" onclick="goHome()">Isyerleri</button><button class="nav-tab active">Isten Cikanlar ('+cikanlar.length+')</button></div>'
     +'<div class="card"><div class="card-header"><span class="card-title">Isten Cikan Personeller</span></div>';
-  if(!cikanlar.length){h+='<div class="empty-state">İşten çıkan personel yok.</div>';}
+  if(!cikanlar.length){h+='<div class="empty-state">Isten cikan personel yok.</div>';}
   else{
     h+='<table><thead><tr><th></th><th>Ad Soyad</th><th>Firma</th><th>Gorevi</th><th>Ise Giris</th><th>Cikis Tarihi</th><th></th></tr></thead><tbody>';
     cikanlar.forEach(function(p){
@@ -389,18 +389,25 @@ function renderCikanlar(){
 function renderFirma(){
   var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f){goHome();return;}
   setBreadcrumb([{label:f.ad}]);
-  var h='<div class="inner-tabs">'
-    +'<button class="itab '+(curTab==='bilgiler'?'active':'')+'" onclick="switchTab(\'bilgiler\')">Firma Bilgileri</button>'
-    +'<button class="itab '+(curTab==='belgeler'?'active':'')+'" onclick="switchTab(\'belgeler\')">Firma Belgeleri</button>'
-    +'<button class="itab '+(curTab==='personeller'?'active':'')+'" onclick="switchTab(\'personeller\')">Personeller</button>'
-    +'<button class="itab '+(curTab==='ekipmanlar'?'active':'')+'" onclick="switchTab(\'ekipmanlar\')">Ekipmanlar</button>'
-    +'<button class="itab '+(curTab==='toplanti'?'active':'')+'" onclick="switchTab(\'toplanti\')">ISG Kurul Toplantıları</button>'
-    +'</div>';
+  var tabs=[
+    {key:'bilgiler',label:'Firma Bilgileri'},
+    {key:'belgeler',label:'Firma Belgeleri'},
+    {key:'personeller',label:'Personeller'},
+    {key:'ekipmanlar',label:'Ekipmanlar'},
+    {key:'toplanti',label:'ISG Kurul Toplantilari'},
+    {key:'isten_cikanlar',label:'Isten Cikanlar'},
+  ];
+  var h='<div class="inner-tabs">';
+  tabs.forEach(function(tab){
+    h+='<button class="itab '+(curTab===tab.key?'active':'')+'" onclick="switchTab(\''+tab.key+'\')">'+tab.label+'</button>';
+  });
+  h+='</div>';
   if(curTab==='bilgiler')h+=renderBilgiler(f);
   else if(curTab==='belgeler')h+=renderFBelgeler(f);
   else if(curTab==='personeller')h+=renderPListesi(f);
   else if(curTab==='ekipmanlar')h+=renderEkipListesi(f);
   else if(curTab==='toplanti')h+=renderToplantiListesi(f);
+  else if(curTab==='isten_cikanlar')h+=renderFirmaCikanlar(f);
   document.getElementById('main').innerHTML=h;updateBadge();
 }
 
@@ -1125,6 +1132,32 @@ updateSidebar();
 // ============================================================
 // TOPLANTI FONKSIYONLARİ
 // ============================================================
+
+
+function renderFirmaCikanlar(f){
+  document.getElementById('add-btn').textContent='';
+  var cikanlar=personeller.filter(function(p){return p.fid===f.id&&!p.aktif;});
+  if(!cikanlar.length) return '<div class="card"><div class="empty-state"><p>Bu firmada isten cikan personel yok.</p></div></div>';
+  var h='<div class="card"><table>';
+  h+='<thead><tr><th></th><th>Ad Soyad</th><th>TC</th><th>Gorevi</th><th>Ise Giris</th><th>Cikis Tarihi</th><th></th></tr></thead><tbody>';
+  cikanlar.forEach(function(p){
+    var ini=p.ad.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+    h+='<tr>';
+    h+='<td><div class="avatar">'+ini+'</div></td>';
+    h+='<td style="font-weight:600">'+p.ad+'</td>';
+    h+='<td style="color:#aaa;font-size:11px">'+(p.tc?p.tc.slice(0,3)+'****'+p.tc.slice(-4):'--')+'</td>';
+    h+='<td style="color:#888">'+(p.gorev||'--')+'</td>';
+    h+='<td style="color:#888;font-size:12px">'+fmt(p.ise_giris)+'</td>';
+    h+='<td><span class="badge badge-gray">'+fmt(p.cikis_tarihi)+'</span></td>';
+    h+='<td><div class="ibtns">';
+    h+='<button class="ibtn" data-pid="'+p.id+'" onclick="geriAl(this.dataset.pid)">Geri Al</button>';
+    h+='<button class="ibtn del" data-pid="'+p.id+'" onclick="delPersonel(this.dataset.pid)">Sil</button>';
+    h+='</div></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  return h;
+}
 
 function renderToplantiListesi(f){
   document.getElementById('add-btn').textContent='+ Toplanti Ekle';
