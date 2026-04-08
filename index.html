@@ -136,6 +136,31 @@ body{display:flex;}
 /* Ana içerik sidebar ile birlikte */
 .main-wrap{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
 .topbar{position:sticky;top:0;z-index:50;}
+
+/* ===== TOPLANTI ===== */
+.toplanti-kart{background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:18px;margin-bottom:12px;}
+.toplanti-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.toplanti-tarih{font-size:13px;font-weight:700;color:#1a1a18;}
+.toplanti-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.toplanti-body{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.toplanti-section{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.toplanti-list{list-style:none;padding:0;}
+.toplanti-list li{font-size:13px;color:#1a1a18;padding:4px 0;border-bottom:1px solid #f5f5f0;display:flex;align-items:center;gap:6px;}
+.toplanti-list li:last-child{border-bottom:none;}
+.toplanti-list li::before{content:"•";color:#1a5fa8;font-weight:700;flex-shrink:0;}
+.toplanti-kararlar{grid-column:1/-1;}
+.toplanti-empty{text-align:center;padding:40px 20px;color:#aaa;}
+.gundem-satir{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.gundem-satir input{flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit;}
+.gundem-satir button{padding:5px 10px;border:1px solid #e5e5e0;border-radius:6px;background:#fff;cursor:pointer;font-size:12px;color:#888;}
+.gundem-satir button:hover{background:#fef2f2;color:#991b1b;border-color:#fecaca;}
+.katilimci-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.katilimci-chip{display:flex;align-items:center;gap:5px;background:#eff6ff;color:#1e40af;border-radius:99px;padding:3px 10px;font-size:12px;}
+.katilimci-chip button{background:none;border:none;cursor:pointer;color:#93c5fd;font-size:13px;line-height:1;padding:0;}
+.katilimci-chip button:hover{color:#991b1b;}
+.sonraki-tarih-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-top:10px;}
+.sonraki-tarih-box .label{font-size:11px;color:#166534;font-weight:700;text-transform:uppercase;}
+.sonraki-tarih-box .val{font-size:14px;font-weight:700;color:#15803d;}
 </style>
 </head>
 <body>
@@ -257,13 +282,13 @@ function ekHtml(e){
 // DATA
 var firmalar=[
   {id:'f1',ad:'ABC Insaat Ltd.',nace:'4120',ts:'cok',vergi:'1234567890',sgk:'123456',adres:'Istanbul / Kadikoy',yetkili:'Mehmet Yildiz',telefon:'0212 555 0101',email:'info@abc.com',bolumler:['Santiye','Ofis','Makine'],ozelEkipler:[],
-   belgeler:[{id:'b1',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-400),bitis:addD(today,-20),pdfler:[]},{id:'b2',ad:'Acil Durum Plani',tip:'mevzuat',key:'acil',hazirlik:addD(today,-10),bitis:addD(today,25),pdfler:[]},{id:'b3',ad:'Yangin Tatbikati',tip:'mevzuat',key:'yangin',hazirlik:addD(today,-60),bitis:addD(today,300),pdfler:[]}],
+   toplantilar:[],belgeler:[{id:'b1',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-400),bitis:addD(today,-20),pdfler:[]},{id:'b2',ad:'Acil Durum Plani',tip:'mevzuat',key:'acil',hazirlik:addD(today,-10),bitis:addD(today,25),pdfler:[]},{id:'b3',ad:'Yangin Tatbikati',tip:'mevzuat',key:'yangin',hazirlik:addD(today,-60),bitis:addD(today,300),pdfler:[]}],
    ekipmanlar:[{id:'e1',ad:'Forklift',marka:'Toyota',model:'8FBN25',seri:'TY-001',konum:'Depo A',sorumlAd:'Ahmet Yilmaz',sorumlTel:'0532 111 2233',sonBakim:addD(today,-50),periyot:90,belgeler:[],fotolar:[]}]},
   {id:'f2',ad:'XYZ Buro Hizmetleri',nace:'8211',ts:'az',vergi:'9876543210',sgk:'654321',adres:'Ankara / Cankaya',yetkili:'Ayse Demir',telefon:'0312 444 0202',email:'info@xyz.com',bolumler:['Muhasebe','IK','IT'],ozelEkipler:[],
-   belgeler:[{id:'b4',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-200),bitis:addD(today,180),pdfler:[]}],
+   toplantilar:[],belgeler:[{id:'b4',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-200),bitis:addD(today,180),pdfler:[]}],
    ekipmanlar:[]},
   {id:'f3',ad:'Guven Kimya A.S.',nace:'2011',ts:'cok',vergi:'1122334455',sgk:'112233',adres:'Izmir / Bornova',yetkili:'Ali Guven',telefon:'0232 333 0303',email:'info@guven.com',bolumler:['Uretim','Laboratuvar','Depo'],ozelEkipler:[{key:'ozel_kimya',label:'Kimyasal Mudahale',gerekli:2}],
-   belgeler:[{id:'b5',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-700),bitis:addD(today,-30),pdfler:[]},{id:'b6',ad:'Acil Durum Plani',tip:'mevzuat',key:'acil',hazirlik:addD(today,-5),bitis:addD(today,-5),pdfler:[]}],
+   toplantilar:[],belgeler:[{id:'b5',ad:'Risk Analizi',tip:'mevzuat',key:'risk',hazirlik:addD(today,-700),bitis:addD(today,-30),pdfler:[]},{id:'b6',ad:'Acil Durum Plani',tip:'mevzuat',key:'acil',hazirlik:addD(today,-5),bitis:addD(today,-5),pdfler:[]}],
    ekipmanlar:[{id:'e2',ad:'Kompressor',marka:'Atlas Copco',model:'GA15',seri:'AC-055',konum:'Makine Dairesi',sorumlAd:'Ayse Sahin',sorumlTel:'0536 555 6677',sonBakim:addD(today,-100),periyot:180,belgeler:[],fotolar:[]}]},
 ];
 var personeller=[
@@ -369,11 +394,13 @@ function renderFirma(){
     +'<button class="itab '+(curTab==='belgeler'?'active':'')+'" onclick="switchTab(\'belgeler\')">Firma Belgeleri</button>'
     +'<button class="itab '+(curTab==='personeller'?'active':'')+'" onclick="switchTab(\'personeller\')">Personeller</button>'
     +'<button class="itab '+(curTab==='ekipmanlar'?'active':'')+'" onclick="switchTab(\'ekipmanlar\')">Ekipmanlar</button>'
+    +'<button class="itab '+(curTab==='toplanti'?'active':'')+'" onclick="switchTab(\'toplanti\')">ISG Kurul Toplantıları</button>'
     +'</div>';
   if(curTab==='bilgiler')h+=renderBilgiler(f);
   else if(curTab==='belgeler')h+=renderFBelgeler(f);
   else if(curTab==='personeller')h+=renderPListesi(f);
-  else h+=renderEkipListesi(f);
+  else if(curTab==='ekipmanlar')h+=renderEkipListesi(f);
+  else if(curTab==='toplanti')h+=renderToplantiListesi(f);
   document.getElementById('main').innerHTML=h;updateBadge();
 }
 
@@ -740,6 +767,7 @@ function handleAdd(){
   else if(curView==='firma'&&curTab==='belgeler')openBelgeModal();
   else if(curView==='firma'&&curTab==='personeller')openPersonelModal();
   else if(curView==='firma'&&curTab==='ekipmanlar')openEkipmanModal();
+  else if(curView==='firma'&&curTab==='toplanti')openToplantiModal();
   else if(curView==='personel'){var p=personeller.find(function(x){return x.id===curPersonelId;});if(p&&p.aktif)openPersonelBelgeModal(curPersonelId);}
 }
 
@@ -1027,6 +1055,7 @@ function persFotoSil(pid){var p=personeller.find(function(x){return x.id===pid;}
 
 // SAVE
 function save(){
+  if(curTab==='toplanti'){saveToplanti();return;}
   if(editType==='firma')saveFirma();
   else if(editType==='bolum'||editType==='ozel-ekip'){closeModal();if(curView==='firma')renderFirma();else render();}
   else if(editType==='firma-belge')saveFBelge();
@@ -1092,6 +1121,163 @@ function delEkipman(eid){if(!confirm('Bu ekipman\u0131 silmek istedi\u011finizde
 
 render();
 updateSidebar();
+
+// ============================================================
+// TOPLANTI FONKSIYONLARİ
+// ============================================================
+
+function renderToplantiListesi(f){
+  document.getElementById('add-btn').textContent='+ Toplanti Ekle';
+  var tl=f.toplantilar||[];
+  if(!tl.length) return '<div class="card"><div class="toplanti-empty"><p style="font-size:14px;font-weight:600;margin-bottom:8px">Henuz toplanti kaydi yok.</p><p style="font-size:13px;color:#aaa;margin-bottom:16px">ISG Kurul toplantilarini buradan kayit altina alabilirsiniz.</p><button class="btn btn-primary" onclick="openToplantiModal()">+ Ilk Toplantiyi Ekle</button></div></div>';
+  var sorted=tl.slice().sort(function(a,b){return new Date(b.tarih)-new Date(a.tarih);});
+  var h='<div style="display:flex;flex-direction:column;gap:12px">';
+  sorted.forEach(function(t){
+    var katStr=(t.katilimcilar||[]).map(function(k){return '<li style="font-size:13px;padding:2px 0">'+k+'</li>';}).join('');
+    var gunStr=(t.gundem||[]).map(function(g,i){return '<li style="font-size:13px;padding:2px 0"><strong>'+(i+1)+'.</strong> '+g+'</li>';}).join('');
+    var karStr=(t.kararlar||[]).map(function(k){return '<li style="font-size:13px;padding:2px 0">'+k+'</li>';}).join('');
+    h+='<div class="toplanti-kart">';
+    h+='<div class="toplanti-header">';
+    h+='<div>';
+    h+='<div class="toplanti-tarih">'+fmt(t.tarih)+' — '+t.baslik+'</div>';
+    h+='<div class="toplanti-badges">';
+    h+='<span class="badge badge-blue">'+((t.katilimcilar||[]).length)+' Katilimci</span>';
+    h+='<span class="badge badge-gray">'+((t.gundem||[]).length)+' Gundem Maddesi</span>';
+    if(t.sonraki) h+='<span class="badge badge-green">Sonraki: '+fmt(t.sonraki)+'</span>';
+    h+='</div></div>';
+    h+='<div class="ibtns">';
+    h+='<button class="ibtn" data-tid="'+t.id+'" onclick="openToplantiModal(this.dataset.tid)">Duzenle</button>';
+    h+='<button class="ibtn del" data-fid="'+f.id+'" data-tid="'+t.id+'" onclick="delToplanti(this.dataset.fid,this.dataset.tid)">Sil</button>';
+    h+='</div></div>';
+    h+='<div class="toplanti-body">';
+    if(gunStr) h+='<div class="toplanti-section"><div class="toplanti-section-title">Gundem Maddeleri</div><ul style="list-style:none;padding:0">'+gunStr+'</ul></div>';
+    if(katStr) h+='<div class="toplanti-section"><div class="toplanti-section-title">Katilimcilar</div><ul style="list-style:none;padding:0">'+katStr+'</ul></div>';
+    if(karStr) h+='<div class="toplanti-section"><div class="toplanti-section-title">Alinan Kararlar</div><ul style="list-style:none;padding:0">'+karStr+'</ul></div>';
+    if((t.dosyalar||[]).length){
+      h+='<div class="toplanti-section"><div class="toplanti-section-title">Ekler</div>';
+      (t.dosyalar||[]).forEach(function(d,i){
+        h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0ea">';
+        h+='<span style="font-size:13px">'+d.ad+'</span>';
+        h+='<button class="ibtn" data-fid="'+f.id+'" data-tid="'+t.id+'" data-idx="'+i+'" onclick="toplantiBelgeIndir(this.dataset.fid,this.dataset.tid,this.dataset.idx)">Indir</button>';
+        h+='</div>';
+      });
+      h+='</div>';
+    }
+    h+='</div></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function openToplantiModal(tidOrEl){
+  var tid=typeof tidOrEl==='string'?tidOrEl:(tidOrEl&&tidOrEl.dataset?tidOrEl.dataset.id:null)||null;
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});
+  toplantiEditId=tid||null;
+  var t=tid?(f.toplantilar||[]).find(function(x){return x.id===tid;}):null;
+
+  // Init lists
+  gundemListesi=t?(t.gundem||[]).slice():[];
+  kararListesi=t?(t.kararlar||[]).slice():[];
+  katilimciListesi=t?(t.katilimcilar||[]).slice():[];
+
+  var psListesi=personeller.filter(function(p){return p.fid===curFirmaId&&p.aktif!==false;});
+
+  document.getElementById('mtitle').textContent=tid?'Toplantıyı Düzenle':'Yeni Toplantı Kaydı';
+  document.getElementById('mbody').innerHTML=
+    '<div class="frow"><label>Toplantı Başlığı</label><input id="top-baslik" value="'+(t?t.baslik:'')+'" placeholder="ISG Kurul Toplantısı - Ocak 2025"/></div>'
+    +'<div class="frow"><label>Toplantı Tarihi</label><input id="top-tarih" type="date" value="'+(t?t.tarih:'')+'"/></div>'
+
+    +'<div class="frow"><label>Gündem Maddeleri</label>'
+    +'<div id="gundem-container"></div>'
+    +'<button class="ibtn" style="margin-top:6px" onclick="gundemEkle()">+ Madde Ekle</button>'
+    +'</div>'
+
+    +'<div class="frow"><label>Katılımcılar</label>'
+    +'<div id="katilimci-chips"></div>'
+    +'<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">'
+    +'<select id="kat-sec" style="flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit"><option value="">-- Personel Seç --</option>'
+    +psListesi.map(function(p){return '<option value="'+p.ad+'">'+p.ad+'</option>';}).join('')
+    +'</select>'
+    +'<button class="ibtn" onclick="katilimciEkleSecim()">Ekle</button>'
+    +'</div>'
+    +'<div style="display:flex;gap:6px;margin-top:6px">'
+    +'<input id="kat-elle" placeholder="Elle isim yaz..." style="flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit"/>'
+    +'<button class="ibtn" onclick="katilimciEkleElle()">Ekle</button>'
+    +'</div>'
+    +'</div>'
+
+    +'<div class="frow"><label>Alınan Kararlar</label>'
+    +'<div id="karar-container"></div>'
+    +'<button class="ibtn" style="margin-top:6px" onclick="kararEkle()">+ Karar Ekle</button>'
+    +'</div>'
+
+    +'<div class="frow"><label>Bir Sonraki Toplantı Tarihi <span style="font-weight:400;color:#aaa">(opsiyonel)</span></label><input id="top-sonraki" type="date" value="'+(t?t.sonraki||'':'')+'"/></div>';
+
+  document.getElementById('ov').classList.remove('hidden');
+  renderGundemUI();
+  renderKararUI();
+  renderKatilimciUI();
+}
+
+function renderGundemUI(){
+  var html='';
+  gundemListesi.forEach(function(g,i){
+    html+='<div class="gundem-satir"><input value="'+g+'" oninput="gundemListesi['+i+']=this.value" style="flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit"/><button onclick="gundemSil('+i+')">✕</button></div>';
+  });
+  document.getElementById('gundem-container').innerHTML=html;
+}
+function gundemEkle(){gundemListesi.push('');renderGundemUI();setTimeout(function(){var inputs=document.querySelectorAll('#gundem-container input');if(inputs.length)inputs[inputs.length-1].focus();},50);}
+function gundemSil(i){gundemListesi.splice(i,1);renderGundemUI();}
+
+function renderKararUI(){
+  var html='';
+  kararListesi.forEach(function(k,i){
+    html+='<div class="gundem-satir"><input value="'+k+'" oninput="kararListesi['+i+']=this.value" style="flex:1;padding:7px 10px;border:1px solid #e5e5e0;border-radius:6px;font-size:13px;font-family:inherit"/><button onclick="kararSil('+i+')">✕</button></div>';
+  });
+  document.getElementById('karar-container').innerHTML=html;
+}
+function kararEkle(){kararListesi.push('');renderKararUI();setTimeout(function(){var inputs=document.querySelectorAll('#karar-container input');if(inputs.length)inputs[inputs.length-1].focus();},50);}
+function kararSil(i){kararListesi.splice(i,1);renderKararUI();}
+
+function renderKatilimciUI(){
+  var html=katilimciListesi.map(function(k,i){
+    return '<span class="katilimci-chip">'+k+'<button onclick="katilimciSil('+i+')">✕</button></span>';
+  }).join('');
+  document.getElementById('katilimci-chips').innerHTML=html;
+}
+function katilimciEkleSecim(){var v=document.getElementById('kat-sec').value;if(!v||katilimciListesi.indexOf(v)>=0)return;katilimciListesi.push(v);renderKatilimciUI();document.getElementById('kat-sec').value='';}
+function katilimciEkleElle(){var v=document.getElementById('kat-elle').value.trim();if(!v||katilimciListesi.indexOf(v)>=0)return;katilimciListesi.push(v);renderKatilimciUI();document.getElementById('kat-elle').value='';}
+function katilimciSil(i){katilimciListesi.splice(i,1);renderKatilimciUI();}
+
+function saveToplanti(){
+  var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f)return;
+  var baslik=document.getElementById('top-baslik').value.trim();
+  var tarih=document.getElementById('top-tarih').value;
+  if(!baslik||!tarih){alert('Başlık ve tarih zorunlu!');return;}
+  var sonraki=document.getElementById('top-sonraki').value||null;
+  var rec={
+    id:toplantiEditId||uid(),
+    baslik:baslik,
+    tarih:tarih,
+    gundem:gundemListesi.filter(function(g){return g.trim();}),
+    katilimcilar:katilimciListesi,
+    kararlar:kararListesi.filter(function(k){return k.trim();}),
+    sonraki:sonraki
+  };
+  if(!f.toplantilar)f.toplantilar=[];
+  if(toplantiEditId){var i=f.toplantilar.findIndex(function(x){return x.id===toplantiEditId;});f.toplantilar[i]=rec;}
+  else f.toplantilar.push(rec);
+  closeModal();
+  renderFirma();
+}
+
+function delToplanti(fid,tid){
+  if(!confirm('Bu toplantı kaydı silinsin mi?'))return;
+  var f=firmalar.find(function(x){return x.id===fid;});
+  if(f)f.toplantilar=(f.toplantilar||[]).filter(function(x){return x.id!==tid;});
+  renderFirma();
+}
+
 </script>
 </body>
 </html>
