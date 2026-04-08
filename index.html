@@ -187,7 +187,7 @@ body{display:flex;}
     <h2 id="mtitle"></h2>
     <div id="mbody"></div>
     <div class="mfooter">
-      <button class="btn" onclick="closeModal()">\u0130ptal</button>
+      <button class="btn" onclick="closeModal()">İptal</button>
       <button class="btn btn-primary" id="save-btn" onclick="save()">Kaydet</button>
     </div>
   </div>
@@ -420,7 +420,7 @@ function renderPListesi(f){
   var psA=personeller.filter(function(p){return p.fid===f.id&&p.aktif;});
   var bl=f.bolumler||[];
   var h='<div class="bolum-filter"><span style="font-size:12px;color:#888;font-weight:600">Bolum:</span>'
-    +'<button class="bolum-chip '+(curBolum==='hepsi'?'active':'')+'" onclick="setCurBolum(\'hepsi\')">Tumu ('+psA.length+')</button>';
+    +'<button class="bolum-chip '+(curBolum==='hepsi'?'active':'')+'" onclick="setCurBolum(\'hepsi\')">Tümü ('+psA.length+')</button>';
   bl.forEach(function(b){var c=psA.filter(function(p){return p.bolum===b;}).length;h+='<button class="bolum-chip '+(curBolum===b?'active':'')+'" onclick="setCurBolum(\''+b+'\')">'+b+' ('+c+')</button>';});
   var atan=psA.filter(function(p){return !p.bolum||bl.indexOf(p.bolum)<0;});
   if(atan.length)h+='<button class="bolum-chip '+(curBolum==='diger'?'active':'')+'" onclick="setCurBolum(\'diger\')">Atanmamis</button>';
@@ -428,7 +428,7 @@ function renderPListesi(f){
   var filtre=psA;
   if(curBolum==='diger')filtre=atan;
   else if(curBolum!=='hepsi')filtre=psA.filter(function(p){return p.bolum===curBolum;});
-  if(!filtre.length){return h+'<div class="card"><div class="empty-state"><p>'+(psA.length?'Bu bolumde personel yok.':'Henuz personel yok.')+'</p>'+(psA.length?'':'<br><button class="btn btn-primary" onclick="openPersonelModal()">+ Ekle</button>')+'</div></div>';}
+  if(!filtre.length){return h+'<div class="card"><div class="empty-state"><p>'+(psA.length?'Bu bölümde personel yok.':'Henuz personel yok.')+'</p>'+(psA.length?'':'<br><button class="btn btn-primary" onclick="openPersonelModal()">+ Ekle</button>')+'</div></div>';}
   if(curBolum==='hepsi'&&bl.length>0){
     var gruplar={};
     filtre.forEach(function(p){var b=(p.bolum&&bl.indexOf(p.bolum)>=0)?p.bolum:'Atanmamis';if(!gruplar[b])gruplar[b]=[];gruplar[b].push(p);});
