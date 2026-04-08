@@ -619,11 +619,31 @@ function renderPersonelDetay(){
 }
 
 // NAV
-function goHome(){curView='home';curFirmaId=null;curPersonelId=null;curEkipmanId=null;render();}
-function goCikanlar(){curView='cikanlar';render();}
-function goFirma(id){curView='firma';curFirmaId=id;curTab='belgeler';curPersonelId=null;curEkipmanId=null;curBolum='hepsi';render();}
-function goPersonel(pid){var p=personeller.find(function(x){return x.id===pid;});if(p)curFirmaId=p.fid;curView='personel';curPersonelId=pid;render();}
-function goEkipman(eid){curView='ekipman';curEkipmanId=eid;render();}
+function goHome(){
+  curView='home';curFirmaId=null;curPersonelId=null;curEkipmanId=null;
+  location.hash='';
+  render();
+}
+function goCikanlar(){curView='cikanlar';location.hash='cikanlar';render();}
+function goFirma(id,tab){
+  curView='firma';curFirmaId=id;
+  curTab=tab||'belgeler';
+  curPersonelId=null;curEkipmanId=null;curBolum='hepsi';
+  location.hash='firma/'+id+(tab&&tab!=='belgeler'?'/'+tab:'');
+  render();
+}
+function goPersonel(pid){
+  var p=personeller.find(function(x){return x.id===pid;});
+  if(p)curFirmaId=p.fid;
+  curView='personel';curPersonelId=pid;
+  location.hash='personel/'+pid;
+  render();
+}
+function goEkipman(eid){
+  curView='ekipman';curEkipmanId=eid;
+  location.hash='ekipman/'+eid;
+  render();
+}
 function switchTab(t){curTab=t;if(t==='personeller')curBolum='hepsi';render();}
 function setCurBolum(b){curBolum=b;renderFirma();}
 function setBreadcrumb(items){
@@ -1245,6 +1265,39 @@ function delToplanti(fid,tid){
   renderFirma();
 }
 
+// ===== URL HASH ROUTER =====
+function parseHash(){
+  var hash=location.hash.replace('#','');
+  if(!hash||hash===''){
+    curView='home';curFirmaId=null;curPersonelId=null;curEkipmanId=null;
+  } else if(hash==='cikanlar'){
+    curView='cikanlar';
+  } else if(hash.startsWith('firma/')){
+    var parts=hash.split('/');
+    curFirmaId=parts[1];
+    curTab=parts[2]||'belgeler';
+    curView='firma';
+    curPersonelId=null;curEkipmanId=null;
+  } else if(hash.startsWith('personel/')){
+    var pid=hash.split('/')[1];
+    var p=personeller.find(function(x){return x.id===pid;});
+    if(p){curFirmaId=p.fid;curPersonelId=pid;curView='personel';}
+    else{curView='home';curFirmaId=null;}
+  } else if(hash.startsWith('ekipman/')){
+    var eid=hash.split('/')[1];
+    curEkipmanId=eid;curView='ekipman';
+  } else {
+    curView='home';curFirmaId=null;
+  }
+}
+
+window.addEventListener('hashchange',function(){
+  parseHash();
+  render();
+});
+
+// Ilk yuklemede hash oku
+parseHash();
 render();
 </script>
 </div>
