@@ -166,12 +166,7 @@ body{display:flex;}
       <div class="sb-user-role">Yonetici</div>
     </div>
   </div>
-  <div class="sb-stats">
-    <div class="sb-stat"><div class="sb-stat-num red" id="sb-exp">0</div><div class="sb-stat-label">Gecmis</div></div>
-    <div class="sb-stat"><div class="sb-stat-num amber" id="sb-son">0</div><div class="sb-stat-label">Yakin</div></div>
-    <div class="sb-stat"><div class="sb-stat-num green" id="sb-ok">0</div><div class="sb-stat-label">Gecerli</div></div>
-    <div class="sb-stat"><div class="sb-stat-num" id="sb-toplam" style="color:#93c5fd">0</div><div class="sb-stat-label">Personel</div></div>
-  </div>
+
   <nav class="sb-nav">
     <div class="sb-nav-section">Menu</div>
     <div class="sb-nav-item active" id="nav-home" onclick="goHome()">
@@ -321,9 +316,52 @@ function renderCikanlar(){
   document.getElementById('main').innerHTML=h;updateBadge();
 }
 
+
+function calcFirmaStats(f){
+  var exp=0,yakin=0,ok=0,toplam=0;
+  // Firma belgeleri
+  (f.belgeler||[]).forEach(function(b){
+    var s=st(b.bitis);
+    if(s==='red')exp++;else if(s==='amber')yakin++;else if(s==='green')ok++;
+  });
+  // Personel belgeleri
+  personeller.filter(function(p){return p.fid===f.id&&p.aktif!==false;}).forEach(function(p){
+    [persIsgBitis(p),persSaglikBitis(p)].forEach(function(d){
+      var s=st(d);
+      if(s==='red')exp++;else if(s==='amber')yakin++;else if(s==='green')ok++;
+    });
+    (p.belgeler||[]).forEach(function(b){
+      var s=st(b.bitis);
+      if(s==='red')exp++;else if(s==='amber')yakin++;else if(s==='green')ok++;
+    });
+  });
+  // Ekipman bakimlari
+  (f.ekipmanlar||[]).forEach(function(e){
+    var bit=ekipBit(e);
+    var s=st(bit);
+    if(s==='red')exp++;else if(s==='amber')yakin++;else if(s==='green')ok++;
+  });
+  // Personel sayilari
+  var aktif=personeller.filter(function(p){return p.fid===f.id&&p.aktif!==false;}).length;
+  var cikan=personeller.filter(function(p){return p.fid===f.id&&!p.aktif;}).length;
+  return {exp:exp,yakin:yakin,ok:ok,aktif:aktif,cikan:cikan};
+}
+
+function renderFirmaStats(f){
+  var s=calcFirmaStats(f);
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:20px">'
+    +'<div class="stat"><div class="stat-num c-red">'+s.exp+'</div><div class="stat-label">Suresi Gecmis</div></div>'
+    +'<div class="stat"><div class="stat-num c-amber">'+s.yakin+'</div><div class="stat-label">30 Gunde Doluyor</div></div>'
+    +'<div class="stat"><div class="stat-num c-green">'+s.ok+'</div><div class="stat-label">Gecerli</div></div>'
+    +'<div class="stat"><div class="stat-num c-blue">'+s.aktif+'</div><div class="stat-label">Aktif Personel</div></div>'
+    +'<div class="stat"><div class="stat-num" style="color:#888">'+s.cikan+'</div><div class="stat-label">Isten Cikan</div></div>'
+    +'</div>';
+}
+
 function renderFirma(){
   var f=firmalar.find(function(x){return x.id===curFirmaId;});if(!f){goHome();return;}
   setBreadcrumb([{label:f.ad}]);
+  var h=renderFirmaStats(f);
   var tabs=[
     {key:'bilgiler',label:'Firma Bilgileri'},
     {key:'belgeler',label:'Firma Belgeleri'},
@@ -332,7 +370,7 @@ function renderFirma(){
     {key:'toplanti',label:'ISG Kurul Toplantilari'},
     {key:'isten_cikanlar',label:'Isten Cikanlar'},
   ];
-  var h='<div class="inner-tabs">';
+  h+='<div class="inner-tabs">';
   tabs.forEach(function(tab){
     h+='<button class="itab '+(curTab===tab.key?'active':'')+'" data-tab="'+tab.key+'" onclick="switchTab(this.dataset.tab)">'+tab.label+'</button>';
   });
@@ -1210,12 +1248,7 @@ function delToplanti(fid,tid){
 }
 
 function updateSidebar(){
-  var gs=calcGlobalStats();
-  var e1=document.getElementById('sb-exp');var e2=document.getElementById('sb-son');
-  var e3=document.getElementById('sb-ok');var e4=document.getElementById('sb-toplam');
-  if(e1)e1.textContent=gs.exp;if(e2)e2.textContent=gs.son;
-  if(e3)e3.textContent=gs.ok;
-  if(e4)e4.textContent=personeller.filter(function(p){return p.aktif!==false;}).length;
+  // istatistikler artik firma sayfasinda gosteriliyor
 }
 
 render();
