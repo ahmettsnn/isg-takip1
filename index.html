@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ISG Takip Sistemi</title>
+<title>İSG Takip Sistemi</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:system-ui,sans-serif;background:#f5f5f0;color:#1a1a18;min-height:100vh;}
@@ -148,19 +148,19 @@ body{display:flex;}
 <div class="sidebar">
   <div class="sb-brand">
     <div class="sb-brand-logo">HSETR</div>
-    <div class="sb-brand-sub">ISG Yonetim Sistemi</div>
+    <div class="sb-brand-sub">İSG Yönetim Sistemi</div>
   </div>
   <div class="sb-user">
     <div class="sb-avatar">A</div>
     <div style="min-width:0">
-      <div class="sb-user-name">ISG Uzmani</div>
-      <div class="sb-user-role">Yonetici</div>
+      <div class="sb-user-name">İSG Uzmani</div>
+      <div class="sb-user-role">Yönetici</div>
     </div>
   </div>
   <nav class="sb-nav">
     <div class="sb-nav-section">Menu</div>
     <div class="sb-nav-item active" id="nav-home" onclick="goHome()">
-      <span class="sb-nav-icon">&#127970;</span> Isyerleri
+      <span class="sb-nav-icon">&#127970;</span> İşyerleri
     </div>
     <div class="sb-nav-section">Sistem</div>
     <div class="sb-nav-item" onclick="openNotif()">
@@ -197,8 +197,8 @@ body{display:flex;}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <h2 style="margin:0">Bildirimler <span id="ncnt" style="font-size:13px;font-weight:400;color:#aaa"></span></h2>
       <div style="display:flex;gap:6px">
-        <button class="ibtn" onclick="tumunuOkundu()">T\u00fcm\u00fcn\u00fc Okundu</button>
-        <button class="ibtn del" onclick="okunanSil()">Okunanlar\u0131 Sil</button>
+        <button class="ibtn" onclick="tumunuOkundu()">Tümünü Okundu Olarak İşaretle</button>
+        <button class="ibtn del" onclick="okunanSil()">Okunanları Sil</button>
       </div>
     </div>
     <div id="nlist"></div>
@@ -207,11 +207,11 @@ body{display:flex;}
 </div>
 <script>
 var SURELER={az:{risk:1825,acil:1460,yangin:365,yillik_egitim:365,yillik_calisma:365,isg_egitim:1095,saglik:1825,ilkyardim:1095,mesleki:1825},teh:{risk:1460,acil:1460,yangin:365,yillik_egitim:365,yillik_calisma:365,isg_egitim:730,saglik:1095,ilkyardim:1095,mesleki:1825},cok:{risk:730,acil:730,yangin:365,yillik_egitim:365,yillik_calisma:365,isg_egitim:365,saglik:365,ilkyardim:1095,mesleki:1825}};
-var FIRMA_MEVZUAT=[{key:'risk',label:'Risk Analizi'},{key:'acil',label:'Acil Durum Plani'},{key:'yangin',label:'Yangin Tatbikati'},{key:'yillik_egitim',label:'Yillik Egitim Plani'},{key:'yillik_calisma',label:'Yillik Calisma Plani'}];
-var PERS_MEVZUAT=[{key:'ilkyardim',label:'Ilk Yardim Egitimi'},{key:'mesleki',label:'Mesleki Yeterlilik'}];
+var FIRMA_MEVZUAT=[{key:'risk',label:'Risk Analizi'},{key:'acil',label:'Acil Durum Planı'},{key:'yangın',label:'Yangın Tatbikatı'},{key:'yillik_egitim',label:'Yıllık Eğitim Planı'},{key:'yillik_calisma',label:'Yıllık Çalışma Planı'}];
+var PERS_MEVZUAT=[{key:'ilkyardim',label:'İlk Yardım Eğitimi'},{key:'mesleki',label:'Mesleki Yeterlilik'}];
 var ACIL_KURAL={az:{yangin:50,koruma:50,kurtarma:50,ilkyardim:20},teh:{yangin:40,koruma:40,kurtarma:40,ilkyardim:15},cok:{yangin:30,koruma:30,kurtarma:30,ilkyardim:10}};
-var ACIL_EKIP=[{key:'yangin',label:'Yangin Ekibi'},{key:'koruma',label:'Koruma Ekibi'},{key:'kurtarma',label:'Kurtarma Ekibi'},{key:'ilkyardim',label:'Ilk Yardim Ekibi'}];
-var TS_LABEL={az:'Az Tehlikeli',teh:'Tehlikeli',cok:'Cok Tehlikeli'};
+var ACIL_EKIP=[{key:'yangin',label:'Yangın Ekibi'},{key:'koruma',label:'Koruma Ekibi'},{key:'kurtarma',label:'Kurtarma Ekibi'},{key:'ilkyardim',label:'Ilk Yardim Ekibi'}];
+var TS_LABEL={az:'Az Tehlikeli',teh:'Tehlikeli',cok:'Çok Tehlikeli'};
 var TS_CLASS={az:'ts-az',teh:'ts-teh',cok:'ts-cok'};
 var PERIYOT=[{v:30,l:'1 Ay'},{v:60,l:'2 Ay'},{v:90,l:'3 Ay'},{v:120,l:'4 Ay'},{v:150,l:'5 Ay'},{v:180,l:'6 Ay'},{v:210,l:'7 Ay'},{v:240,l:'8 Ay'},{v:270,l:'9 Ay'},{v:300,l:'10 Ay'},{v:330,l:'11 Ay'},{v:365,l:'12 Ay'}];
 
